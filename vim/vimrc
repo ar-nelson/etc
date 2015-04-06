@@ -1,0 +1,280 @@
+" Adam Nelson's Global VIMRC
+"
+" This file contains settings common to all Vim instances
+" that I use, on any machine. It should not be used as the
+" primary VIMRC file for any Vim instance. Instead, it
+" should be sourced from the primary VIMRC, and the primary
+" VIMRC can contain any local modifications to the file.
+" ---------------------------------------------------------
+
+source ~/dotfiles/vim/plugins.vim
+
+" Basic Options {{{ ---------------------------------------
+
+" sensible.vim should be loaded by Vundle by default, so
+" a lot of standard options are missing from here.
+
+" Enable omni completion.
+filetype plugin on
+set ofu=syntaxcomplete#Complete
+
+" Enable the mouse on the console.
+set mouse=a
+
+" Get rid of annoying beeping!
+set noerrorbells
+set visualbell
+set t_vb=
+au GUIEnter * set vb t_vb=
+
+" Use spaces instad of tabs. Indent 2 spaces by default.
+set expandtab
+set shiftwidth=2
+set softtabstop=2
+set tabstop=8
+filetype plugin indent on
+
+" Don't close the current buffer when opening a new one.
+set hidden
+
+" Substitute globally by default
+set gdefault
+
+" Text wrapping
+set textwidth=80
+set formatoptions=cjqrn1
+
+" }}} -----------------------------------------------------
+" Appearance {{{ ------------------------------------------
+
+" Set the color scheme.
+set background=dark
+if has("gui_running")
+  color distinguished
+  set cursorline
+else
+  if has("win32")
+    color koehler " Use an 8-color-friendly color scheme in Windows CMD.
+  else
+    set t_Co=256 " Enforce 256-color mode on a Linux terminal.
+    color distinguished
+    set cursorline
+  endif
+endif
+
+" Always show line numbers.
+set number
+set numberwidth=3
+
+" Highlight search results.
+set hlsearch
+
+" Highlight matching brackets.
+set showmatch
+
+" No line wrapping for source code.
+set nowrap
+
+" HOWEVER, enable line wrapping for plaintext, Markdown, and TeX files!
+function! SetWrap()
+  setlocal wrap linebreak nolist textwidth=0 wrapmargin=0
+  nnoremap <Up> gk
+  nnoremap <Down> gj
+  vnoremap <Up> gk
+  vnoremap <Down> gj
+endfunction
+function! SetNoWrap()
+  setlocal nowrap
+  nnoremap <Up> k
+  nnoremap <Down> j
+  vnoremap <Up> k
+  vnoremap <Down> j
+endfunction
+autocmd FileType txt call SetWrap()
+autocmd FileType markdown call SetWrap()
+autocmd FileType tex call SetWrap()
+set showbreak=…
+
+" Custom status line:
+set statusline=[%n]\ %<%.99f\ %h%w%m%r%y%=%-16(\ %l,%c-%v\ %)%P
+"set statusline=%t       "tail of the filename
+"set statusline+=\ [%{strlen(&fenc)?&fenc:'none'}, "file encoding
+"set statusline+=%{&ff}] "file format
+"set statusline+=%h      "help file flag
+"set statusline+=%m      "modified flag
+"set statusline+=%r      "read only flag
+"set statusline+=%y      "filetype
+"set statusline+=%=      "left/right separator
+"set statusline+=%c,     "cursor column
+"set statusline+=%l/%L   "cursor line/total lines
+"set statusline+=\ \|\ %P    "percent through file
+
+" }}} -----------------------------------------------------
+" Plugin Options {{{ -----------------------------------
+
+" Syntastic
+let g:syntastic_mode_map = { 'mode': 'passive',
+	\ 'active_filetypes': ['javascript', 'haskell', 'lhaskell'],
+	\ 'passive_filetypes': ['c', 'java', 'groovy', 'scala'] }
+
+" }}} -----------------------------------------------------
+" Searching {{{ -------------------------------------------
+
+" Ctrl-P
+let g:ctrlp_match_window_reversed = 0
+set wildignore+=*.pyc,*.png,*.jpg,*.gif,*.PNG,*.JPG,*.GIF,*.pdf,*.o,*.obj,.hg
+set wildignore+=*/Archive/*,*.jar,*.class,*.doc,*.rtf,*.ppt,*.zip,*.gz,*.bz2
+set wildignore+=*.lzma,*.7z,*.exe,*.dll,*.so.*,*~,*.wav,*.mp3,*.flac,*.ogg
+set wildignore+=*.ttf,*.mpg,*.avi,*.MPG,*.AVI,*.mp4,*.divx,*.wma,*.wmv,*/target/*
+
+" }}} -----------------------------------------------------
+" LaTeX {{{ -----------------------------------------------
+
+au BufRead,BufNewFile *.tex set filetype=tex
+function! TeXMode()
+  let b:tex_flavor = 'pdflatex'
+  compiler tex
+  setlocal makeprg=pdflatex\ \-file\-line\-error\ \-interaction=nonstopmode\ %
+  setlocal errorformat=%f:%l:\ %m
+endfunction
+autocmd FileType tex call TeXMode()
+
+" }}} -----------------------------------------------------
+" Haskell {{{ -------------------------------------
+
+function! SetToCabalBuild()
+  if glob("*.cabal") != ''
+    setl makeprg=cabal\ build
+  endif
+endfunction
+
+autocmd FileType haskell,lhaskell setl keywordprg=hoogle\ --count=10
+"autocmd FileType haskell,lhaskell setl formatprg=xargs\ pointfree
+autocmd FileType haskell,lhaskell,cabal call SetToCabalBuild()
+
+command! -range Pf <line1>,<line2>!pointfree "$(cat)"
+command! -range Unpf <line1>,<line2>!pointful "$(cat)" | sed 's/^(\(.*\))$/\1/'
+
+function! FindCabalSandboxRoot()
+    return finddir('.cabal-sandbox', './;')
+endfunction
+
+function! FindCabalSandboxRootPackageConf()
+    return glob(FindCabalSandboxRoot().'/*-packages.conf.d')
+endfunction
+
+let g:hdevtools_options = '-g-ilib -g-isrc -g-i. -g-idist/build/autogen -g-Wall -g-package-conf='.FindCabalSandboxRootPackageConf()
+
+let hscoptions="𝐒𝐓𝐌𝐄𝔻⇒*erxwiRBQZ"
+
+" }}} -----------------------------------------------------
+" Misc. Languages {{{ -------------------------------------
+
+au BufRead,BufNewFile *.txt set filetype=txt
+au BufRead,BufNewFile *.md set filetype=markdown
+au BufRead,BufNewFile *.gradle set filetype=gradle
+autocmd FileType java set tw=100
+autocmd FileType scala set tw=100
+
+" }}} -----------------------------------------------------
+" Key Mappings {{{ ----------------------------------------
+
+" Shortcuts for plugin commands.
+let g:ctrlp_map = '<Leader>p'
+nnoremap <Leader><Leader> :CtrlPBuffer<CR>
+"nnoremap <Leader>o :MRU<CR>
+nnoremap <Leader>n :NERDTree<CR>
+"nnoremap <Leader>t :TagbarToggle<CR>
+nnoremap <Leader>r :RainbowParenthesesToggleAll<CR>
+nnoremap <Leader>pt :CtrlPTag<CR>
+nnoremap <Leader>/ :CtrlPLine<CR>
+nnoremap <Leader>a :Ag
+nnoremap <Leader>q gqip
+nnoremap <Leader>w <C-w>v<C-w>l
+nnoremap <Leader><Tab> :Scratch<CR>
+au FileType haskell,lhaskell nnoremap <buffer> <leader>ht :HdevtoolsType<CR>
+au FileType haskell,lhaskell nnoremap <buffer> <leader>hi :HdevtoolsInfo<CR>
+au FileType haskell,lhaskell nnoremap <buffer> <silent> <leader>hc :HdevtoolsClear<CR>
+
+" Use Windows-style CTRL-shortcuts.
+nnoremap <C-a> ggVG
+nnoremap <C-s> :w<CR>
+noremap <C-c> "+y
+noremap <C-x> "+d
+noremap <C-v> "+p
+
+" Alias Vim's C-v to C-q, like mswin.vim.
+noremap <C-q> <C-v> 
+inoremap <C-q> <C-v> 
+
+" Open VIMRC with one command.
+nnoremap <Leader>rc  :e $MYVIMRC<CR> 
+nnoremap <Leader>grc :e $MYGVIMRC<CR>
+
+" Source a modified VIMRC with one command as well.
+nnoremap <Leader>src :so $MYVIMRC<CR>
+
+" Open help in a vertical split with :vhelp.
+cabbrev vhelp botright vert h 
+
+" Fix the arrow keys bug in visual mode.
+vnoremap <Left>  h
+vnoremap <Right> l
+vnoremap <Up>    k
+vnoremap <Down>  j
+
+" Map CTRL+arrow keys and CTRL+hjkl to switch windows.
+nnoremap <C-Left>  <C-w>h 
+nnoremap <C-Down>  <C-w>j 
+nnoremap <C-Up>    <C-w>k 
+nnoremap <C-Right> <C-w>l 
+nnoremap <C-h> <C-w>h 
+nnoremap <C-j> <C-w>j 
+nnoremap <C-k> <C-w>k 
+nnoremap <C-l> <C-w>l 
+
+" Use \x to close the current buffer without closing the window.
+nnoremap <Leader>x :bp\|bd #<CR>
+
+" Save, compile, and display errors with \m.
+nnoremap <Leader>m :w\|silent! make\|cw<CR><C-l>
+
+" Unset the 'last search pattern' register by hitting return.
+nnoremap <CR> :noh<CR><CR>
+
+" When searching, center on the next search term.
+nnoremap n nzz
+nnoremap N Nzz
+
+" Space to replace words!
+" c-Space: Change current word.
+" d-Space: Delete current word.
+" y-Space: Copy current word.
+" P-Space: Paste over current word, but keep the same paste register!
+nnoremap c<Space> ciw
+nnoremap d<Space> diw
+nnoremap y<Space> yiw
+nnoremap P<Space> bvepbyee
+
+" Improved pasting for fun and profit:
+" Captial Y becomes y$ instead of yy.
+" Capital P becomes a prefix.
+" PP to replace a line, Pp for old functionality.
+noremap Y y$
+nnoremap PP VpVy
+nnoremap Pp P
+
+" Map semicolon to colon, to reduce finger strain.
+" The (unused) comma key replaces the semicolon.
+noremap ; :
+noremap , ;
+
+" Quit accidentally hitting F1!
+inoremap <F1> <ESC>
+nnoremap <F1> <ESC>
+vnoremap <F1> <ESC>
+
+" }}} -----------------------------------------------------
+
+" vim: foldmethod=marker
+
