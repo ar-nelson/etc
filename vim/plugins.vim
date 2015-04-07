@@ -21,6 +21,7 @@ Plugin 'ar-nelson/haskell-vim'
 Plugin 'PProvost/vim-ps1'
 Plugin 'derekwyatt/vim-scala'
 Plugin 'wb14123/vim-stylish-haskell'
+Plugin 'elzr/vim-json'
 
 call vundle#end()
 filetype plugin indent on

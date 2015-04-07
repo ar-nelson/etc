@@ -175,6 +175,7 @@ au BufRead,BufNewFile *.md set filetype=markdown
 au BufRead,BufNewFile *.gradle set filetype=gradle
 autocmd FileType java set tw=100
 autocmd FileType scala set tw=100
+autocmd FileType json setl formatprg=jq\ .\ -
 
 " }}} -----------------------------------------------------
 " Key Mappings {{{ ----------------------------------------
