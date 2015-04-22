@@ -163,7 +163,7 @@ function! FindCabalSandboxRootPackageConf()
     return glob(FindCabalSandboxRoot().'/*-packages.conf.d')
 endfunction
 
-let g:hdevtools_options = '-g-ilib -g-isrc -g-i. -g-idist/build/autogen -g-Wall -g-package-conf='.FindCabalSandboxRootPackageConf()
+let g:syntastic_haskell_hdevtools_args = '-g-ilib -g-isrc -g-i. -g-idist/build/autogen -g-Wall -g-package-conf='.FindCabalSandboxRootPackageConf()
 
 let hscoptions="𝐒𝐓𝐌𝐄𝔻⇒*erxwiRBQZ"
 
@@ -206,10 +206,10 @@ noremap <C-q> <C-v>
 inoremap <C-q> <C-v> 
 
 " Open VIMRC with one command.
-nnoremap <Leader>rc  :e ~/dotfiles/vimrc<CR> 
+nnoremap <Leader>rc  :e ~/dotfiles/vim/vimrc<CR> 
 
 " Source a modified VIMRC with one command as well.
-nnoremap <Leader>src :so ~/dotfiles/vimrc<CR>
+nnoremap <Leader>src :so ~/dotfiles/vim/vimrc<CR>
 
 " Open help in a vertical split with :vhelp.
 cabbrev vhelp botright vert h 
