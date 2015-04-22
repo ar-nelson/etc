@@ -206,11 +206,10 @@ noremap <C-q> <C-v>
 inoremap <C-q> <C-v> 
 
 " Open VIMRC with one command.
-nnoremap <Leader>rc  :e $MYVIMRC<CR> 
-nnoremap <Leader>grc :e $MYGVIMRC<CR>
+nnoremap <Leader>rc  :e ~/dotfiles/vimrc<CR> 
 
 " Source a modified VIMRC with one command as well.
-nnoremap <Leader>src :so $MYVIMRC<CR>
+nnoremap <Leader>src :so ~/dotfiles/vimrc<CR>
 
 " Open help in a vertical split with :vhelp.
 cabbrev vhelp botright vert h 
