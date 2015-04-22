@@ -183,11 +183,8 @@ autocmd FileType json setl formatprg=jq\ .\ -
 " Shortcuts for plugin commands.
 let g:ctrlp_map = '<Leader>p'
 nnoremap <Leader><Leader> :CtrlPBuffer<CR>
-"nnoremap <Leader>o :MRU<CR>
 nnoremap <Leader>n :NERDTree<CR>
-"nnoremap <Leader>t :TagbarToggle<CR>
 nnoremap <Leader>r :RainbowParenthesesToggleAll<CR>
-nnoremap <Leader>pt :CtrlPTag<CR>
 nnoremap <Leader>/ :CtrlPLine<CR>
 nnoremap <Leader>a :Ag
 nnoremap <Leader>q gqip
