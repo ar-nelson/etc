@@ -12,7 +12,6 @@ Plugin 'kien/rainbow_parentheses.vim'
 Plugin 'mtth/scratch.vim'
 Plugin 'scrooloose/nerdtree'
 Plugin 'scrooloose/syntastic'
-Plugin 'Lokaltog/vim-distinguished'
 Plugin 'bitc/vim-hdevtools'
 Plugin 'kchmck/vim-coffee-script'
 Plugin 'dag/vim-fish'
@@ -22,6 +21,7 @@ Plugin 'PProvost/vim-ps1'
 Plugin 'derekwyatt/vim-scala'
 Plugin 'wb14123/vim-stylish-haskell'
 Plugin 'elzr/vim-json'
+Plugin 'ar-nelson/vim-colors-solarized'
 
 call vundle#end()
 filetype plugin indent on

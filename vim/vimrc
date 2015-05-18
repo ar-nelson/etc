@@ -48,19 +48,9 @@ set formatoptions=cjqrn1
 " Appearance {{{ ------------------------------------------
 
 " Set the color scheme.
+colors solarized
 set background=dark
-if has("gui_running")
-  color distinguished
-  set cursorline
-else
-  if has("win32")
-    color koehler " Use an 8-color-friendly color scheme in Windows CMD.
-  else
-    set t_Co=256 " Enforce 256-color mode on a Linux terminal.
-    color distinguished
-    set cursorline
-  endif
-endif
+set cursorline
 
 " Always show line numbers.
 set number
