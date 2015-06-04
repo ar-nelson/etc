@@ -36,7 +36,7 @@ alias cp='cp -i'
 alias mv='mv -i'
 
 alias xcopy='xclip -i -selection clipboard'
-alias xpaste="xclip -o -selection clipboard'
+alias xpaste='xclip -o -selection clipboard'
 
 # Use modern completion system
 autoload -Uz compinit
