@@ -1,6 +1,7 @@
 # Set up the prompt
 autoload -U colors && colors
-PROMPT="%{$fg_bold[green]%(! $fg_no_bold[red] )%}—%{$fg_bold[green]%(1j $fg_no_bold[green] )%}—%{$fg_bold[green]%(?  $fg_no_bold[red])%}—%{$reset_color%} "
+setopt PROMPT_SUBST
+PROMPT='%{$fg[yellow]%}$(basename $(pwd)) %{$fg_bold[green]%(1j $fg_no_bold[green] )%}—%{$fg_bold[green]%(?  $fg_no_bold[red])%}—%{$reset_color%} '
 case $TERM in
   screen*)
     precmd() {
