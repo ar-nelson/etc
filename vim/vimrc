@@ -86,7 +86,7 @@ autocmd FileType tex call SetWrap()
 set showbreak=…
 
 " Custom status line:
-set statusline=[%n]\ %<%.99f\ %h%w%m%r%y%=%-16(\ %l,%c-%v\ %)%P
+"set statusline=[%n]\ %<%.99f\ %h%w%m%r%y%=%-16(\ %l,%c-%v\ %)%P
 "set statusline=%t       "tail of the filename
 "set statusline+=\ [%{strlen(&fenc)?&fenc:'none'}, "file encoding
 "set statusline+=%{&ff}] "file format
@@ -98,6 +98,7 @@ set statusline=[%n]\ %<%.99f\ %h%w%m%r%y%=%-16(\ %l,%c-%v\ %)%P
 "set statusline+=%c,     "cursor column
 "set statusline+=%l/%L   "cursor line/total lines
 "set statusline+=\ \|\ %P    "percent through file
+let g:airline_powerline_fonts = 1
 
 " }}} -----------------------------------------------------
 " Plugin Options {{{ -----------------------------------

@@ -22,6 +22,7 @@ Plugin 'derekwyatt/vim-scala'
 Plugin 'wb14123/vim-stylish-haskell'
 Plugin 'elzr/vim-json'
 Plugin 'ar-nelson/vim-colors-solarized'
+Plugin 'bling/vim-airline'
 
 call vundle#end()
 filetype plugin indent on
