@@ -88,6 +88,52 @@ set showbreak=…
 let g:airline_powerline_fonts = 1
 
 " }}} -----------------------------------------------------
+" Backup, Swap, and Undo Directories {{{ ------------------
+
+set backup
+if exists("+undofile")
+  set undofile
+end
+
+if has('win32')
+  " On Windows, store everything under ~\AppData\Local\Vim
+
+  set shellslash
+  if isdirectory($HOME . '\\AppData\\Local\\Vim\\swap') == 0
+    :silent !mkdir \%USERPROFILE\%\AppData\Local\Vim\swap
+  endif
+  if isdirectory($HOME . '\\AppData\\Local\\Vim\\backup') == 0
+    :silent !mkdir \%USERPROFILE\%\AppData\Local\Vim\backup
+  endif
+  if isdirectory($HOME . '\\AppData\\Local\\Vim\\undo') == 0
+    :silent !mkdir \%USERPROFILE\%\AppData\Local\Vim\undo
+  endif
+  set directory=~/AppData/Local/Vim/swap//,c:/tmp//,c:/temp//,.
+  set backupdir=~/AppData/Local/Vim/backup//,c:/tmp//,c:/temp//,.
+  if exists("+undofile")
+    set undodir=~/AppData/Local/Vim/undo//
+  endif
+
+else
+  " On Linux, store everything under ~/.vim-cache
+
+  if isdirectory($HOME . '/.vim-cache/swap') == 0
+    :silent !mkdir -p ~/.vim-cache/swap
+  endif
+  if isdirectory($HOME . '/.vim-cache/backup') == 0
+    :silent !mkdir -p ~/.vim-cache/backup
+  endif
+  if isdirectory($HOME . '/.vim-cache/undo') == 0
+    :silent !mkdir -p ~/.vim-cache/undo
+  endif
+  set directory=~/.vim-cache/swap//,~/tmp//,/tmp//,.
+  set backupdir=~/.vim-cache/backup//,~/tmp//,/tmp//,.
+  if exists("+undofile")
+    set undodir=~/.vim-cache/undo//
+  endif
+endif
+
+" }}} -----------------------------------------------------
 " Plugin Options {{{ -----------------------------------
 
 " Syntastic
