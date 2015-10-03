@@ -48,9 +48,13 @@ set formatoptions=cjqrn1
 " Appearance {{{ ------------------------------------------
 
 " Set the color scheme.
-colors solarized
+if has('gui_running')
+  colors solarized
+  set cursorline
+else
+  colors koehler
+endif
 set background=dark
-set cursorline
 
 " Always show line numbers.
 set number
