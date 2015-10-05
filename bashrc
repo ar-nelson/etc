@@ -64,12 +64,20 @@ else
 fi
 
 # Choose prompt color based on the md5sum of user@host
-case "$(echo "`whoami`@`hostname`" | md5sum)" in
+HOST_MD5="$(echo "`whoami`@`hostname`" | md5sum)"
+case "$HOST_MD5" in
   [0-3]*)      PROMPT_COLOR='\[\033[32m\]';; # green
   [4-7]*)      PROMPT_COLOR='\[\033[33m\]';; # yellow
   [89abAB]*)   PROMPT_COLOR='\[\033[35m\]';; # purple
   [cdefCDEF]*) PROMPT_COLOR='\[\033[36m\]';; # cyan
   *)           PROMPT_COLOR='\[\033[31m\]';; # red (error)
+esac
+case "$HOST_MD5" in
+  ?[0-3]*)      ARROW_COLOR='\[\033[32m\]';; # green
+  ?[4-7]*)      ARROW_COLOR='\[\033[33m\]';; # yellow
+  ?[89abAB]*)   ARROW_COLOR='\[\033[35m\]';; # purple
+  ?[cdefCDEF]*) ARROW_COLOR='\[\033[36m\]';; # cyan
+  *)            ARROW_COLOR='\[\033[31m\]';; # red (error)
 esac
 
 small_pwd() {
@@ -90,9 +98,10 @@ git_ps1_block() {
 }
 
 PS1='\[\033]0;$MSYSTEM:${PWD//[^[:ascii:]]/?}\007\]' # set window title
-PS1="$PS1$PROMPT_COLOR"       # colorize
-PS1="$PS1$PS_SYM_SOLIDARROW "
-PS1="$PS1"'\u@\h'             # user@host
+PS1="$PS1$ARROW_COLOR"        # colorize arrow
+PS1="$PS1$PS_SYM_SOLIDARROW"
+PS1="$PS1$PROMPT_COLOR"       # colorize prompt
+PS1="$PS1"' \u@\h'            # user@host
 PS1="$PS1 $PS_SYM_LINEARROW "
 PS1="$PS1"'`small_pwd`'       # current working directory
 PS1="$PS1 $PS_SYM_LINEARROW"
