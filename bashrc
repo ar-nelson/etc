@@ -12,7 +12,8 @@ shopt -s extglob
 # Include .files when globbing.
 shopt -s dotglob
 # When a glob expands to nothing, make it an empty string instead of the literal characters.
-shopt -s nullglob
+# (disabled because it screws up tab-completion somehow...)
+#shopt -s nullglob
 # fix spelling errors for cd, only in interactive shell
 shopt -s cdspell
 # vi mode
@@ -28,6 +29,9 @@ shopt -s cmdhist
 # Ignore duplicates, ls without options and builtin commands
 HISTCONTROL=ignoredups
 export HISTIGNORE="&:ls:[bf]g:exit"
+
+# Solarized dircolors
+eval `dircolors ~/dotfiles/dircolors-solarized/dircolors.ansi-dark`
 
 # Aliases
 # ------------------------------------------------------------
@@ -49,76 +53,64 @@ alias xpaste='xclip -o -selection clipboard'
 # Prompt
 # ------------------------------------------------------------
 
+source ~/dotfiles/git-prompt.sh
+
 if [ "$TERM" == "linux" ]; then
   # Use ASCII symbols
-  PS_SYM_LINEARROW=">"
-  PS_SYM_SOLIDARROW=">"
-  PS_SYM_GIT="git"
-  PS_SYM_ELLIPSIS=""
+  Symbol_LBracket="["
+  Symbol_RBracket="]"
+  Symbol_Ellipsis="..."
 else
-  # Use Powerline symbols
-  PS_SYM_LINEARROW=""
-  PS_SYM_SOLIDARROW=""
-  PS_SYM_GIT=""
-  PS_SYM_ELLIPSIS="…"
+  # Use Unicode symbols
+  Symbol_LBracket="‹"
+  Symbol_RBracket="›"
+  Symbol_Ellipsis="…"
 fi
 
-# Choose prompt color based on the md5sum of user@host
-HOST_MD5="$(echo "`whoami`@`hostname`" | md5sum)"
-case "$HOST_MD5" in
-  [0-3]*)      PROMPT_COLOR='\[\033[32m\]';; # green
-  [4-7]*)      PROMPT_COLOR='\[\033[33m\]';; # yellow
-  [89abAB]*)   PROMPT_COLOR='\[\033[35m\]';; # purple
-  [cdefCDEF]*) PROMPT_COLOR='\[\033[36m\]';; # cyan
-  *)           PROMPT_COLOR='\[\033[31m\]';; # red (error)
-esac
-case "$HOST_MD5" in
-  ?[0-3]*)      ARROW_COLOR='\[\033[32m\]';; # green
-  ?[4-7]*)      ARROW_COLOR='\[\033[33m\]';; # yellow
-  ?[89abAB]*)   ARROW_COLOR='\[\033[35m\]';; # purple
-  ?[cdefCDEF]*) ARROW_COLOR='\[\033[36m\]';; # cyan
-  *)            ARROW_COLOR='\[\033[31m\]';; # red (error)
-esac
+set_prompt() {
+  local Last_Command=$?
+  local Current_Directory=$(pwd)
+  local Bracket_Color='\[\033[1;37;40m\]'
+  local Hostname_Color='\[\033[1;33;40m\]'
+  local Directory_Color='\[\033[34m\]'
+  local Git_Color='\[\033[33m\]'
+  local Success_Color='\[\033[32m\]'
+  local Failure_Color='\[\033[31m\]'
+  local Reset_Color='\[\033[0;37m\]'
 
-small_pwd() {
-  local pwd=$(pwd)
-  case "$pwd" in
-    $HOME) echo -n '~';;
-    '/') echo -n '/';;
-    /[!-.0-~]) echo -n "$pwd";;
-    *) echo -n "$PS_SYM_ELLIPSIS/$(basename "$pwd")";;
+  # Window title
+  PS1='\[\033]0;\u@\h:${PWD//[^[:ascii:]]/?}\007\]'
+  
+  # [user@host]
+  PS1+="$Bracket_Color$Symbol_LBracket"
+  PS1+="$Hostname_Color"'\u@\h'
+  PS1+="$Bracket_Color$Symbol_RBracket"
+  PS1+="$Reset_Color"
+  
+  # Working directory
+  PS1+="$Directory_Color "
+  case "$Current_Directory" in
+    $HOME) PS1+='~';;
+    '/') PS1+='/';;
+    /[!-.0-~]) PS1+="$Current_Directory";;
+    *) PS1+="$Symbol_Ellipsis/$(basename "$Current_Directory")";;
   esac
-}
-
-git_ps1_block() {
-  local gitresult=$(__git_ps1 | sed "s/[.][.][.]/$PS_SYM_ELLIPSIS/g")
-  if [[ ! -z "$gitresult" ]]; then
-    echo -n " $PS_SYM_GIT$gitresult $PS_SYM_LINEARROW"
+  PS1+="$Reset_Color"
+  
+  # Git branch
+  if command -v git >/dev/null 2>&1; then
+    PS1+="$Git_Color$(__git_ps1)$Reset_Color"
   fi
+
+  # Colorized dash based on last command's exit code
+  if [[ $Last_Command == 0 ]]; then
+    PS1+="$Success_Color"
+  else
+    PS1+="$Failure_Color"
+  fi
+  PS1+=" -$Reset_Color "
 }
 
-PS1='\[\033]0;$MSYSTEM:${PWD//[^[:ascii:]]/?}\007\]' # set window title
-PS1="$PS1$ARROW_COLOR"        # colorize arrow
-PS1="$PS1$PS_SYM_SOLIDARROW"
-PS1="$PS1$PROMPT_COLOR"       # colorize prompt
-PS1="$PS1"' \u@\h'            # user@host
-PS1="$PS1 $PS_SYM_LINEARROW "
-PS1="$PS1"'`small_pwd`'       # current working directory
-PS1="$PS1 $PS_SYM_LINEARROW"
-if test -z "$WINELOADERNOEXEC"
-then
-	GIT_EXEC_PATH="$(git --exec-path 2>/dev/null)"
-	COMPLETION_PATH="${GIT_EXEC_PATH%/libexec/git-core}"
-	COMPLETION_PATH="${COMPLETION_PATH%/lib/git-core}"
-	COMPLETION_PATH="$COMPLETION_PATH/share/git/completion"
-	if test -f "$COMPLETION_PATH/git-prompt.sh"
-	then
-		. "$COMPLETION_PATH/git-completion.bash"
-		. "$COMPLETION_PATH/git-prompt.sh"
-                GIT_PS1_SHOWDIRTYSTATE=1
-                GIT_PS1_SHOWSTASHSTATE=1
-		PS1="$PS1"'`git_ps1_block`' # git branch
-	fi
-fi
-PS1="$PS1"'\[\033[0;37m\] '   # reset color
+PROMPT_COMMAND='set_prompt'
+PS2='\[\033[1;33m\]'"$Symbol_Ellipsis "'\[\033[0;37m\]'
 
