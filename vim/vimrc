@@ -88,8 +88,6 @@ autocmd FileType markdown call SetWrap()
 autocmd FileType tex call SetWrap()
 set showbreak=…
 
-let g:airline_powerline_fonts = 1
-
 " }}} -----------------------------------------------------
 " Backup, Swap, and Undo Directories {{{ ------------------
 
@@ -143,6 +141,11 @@ endif
 let g:syntastic_mode_map = { 'mode': 'passive',
 	\ 'active_filetypes': ['javascript', 'haskell', 'lhaskell'],
 	\ 'passive_filetypes': ['c', 'java', 'groovy', 'scala'] }
+let g:syntastic_javascript_checkers = ['jshint']
+
+" VimCompletesMe
+set completeopt-=preview
+autocmd FileType javascript,typescript let b:vcm_tab_complete = 'omni'
 
 " Ctrl-P
 let g:ctrlp_match_window_reversed = 0
@@ -150,7 +153,7 @@ set wildignore+=*.pyc,*.png,*.jpg,*.gif,*.PNG,*.JPG,*.GIF,*.pdf,*.o,*.obj,.hg
 set wildignore+=*/Archive/*,*.jar,*.class,*.doc,*.rtf,*.ppt,*.zip,*.gz,*.bz2
 set wildignore+=*.lzma,*.7z,*.exe,*.dll,*.so.*,*~,*.wav,*.mp3,*.flac,*.ogg
 set wildignore+=*.ttf,*.mpg,*.avi,*.MPG,*.AVI,*.mp4,*.divx,*.wma,*.wmv
-set wildignore+=*.a,*.hi,*/target/*,*/build/*,*/dist/*
+set wildignore+=*.a,*.hi,*/target/*,*/build/*,*/dist/*,*/node_modules/*
 
 " }}} -----------------------------------------------------
 " Haskell {{{ -------------------------------------
@@ -219,10 +222,10 @@ noremap <C-q> <C-v>
 inoremap <C-q> <C-v> 
 
 " Open VIMRC with one command.
-nnoremap <Leader>rc  :e ~/dotfiles/vim/vimrc<CR> 
+nnoremap <Leader>rc  :e ~/etc/vim/vimrc<CR> 
 
 " Source a modified VIMRC with one command as well.
-nnoremap <Leader>src :so ~/dotfiles/vim/vimrc<CR>
+nnoremap <Leader>src :so ~/etc/vim/vimrc<CR>
 
 " Open help in a vertical split with :vhelp.
 cabbrev vhelp botright vert h 
