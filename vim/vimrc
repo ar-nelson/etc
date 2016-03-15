@@ -7,7 +7,7 @@
 " VIMRC can contain any local modifications to the file.
 " ---------------------------------------------------------
 
-source ~/dotfiles/vim/plugins.vim
+source ~/etc/vim/plugins.vim
 
 " Basic Options {{{ ---------------------------------------
 
@@ -48,7 +48,10 @@ set formatoptions=cjqrn1
 " Appearance {{{ ------------------------------------------
 
 " Set the color scheme.
-colors solarized
+if !has('gui_running')
+  set t_Co=16
+endif
+colors metachrome
 set cursorline
 set background=dark
 

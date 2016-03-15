@@ -7,31 +7,19 @@
 # Options
 # ------------------------------------------------------------
 
-# Use extra globing features. See man bash, search extglob.
 shopt -s extglob
-# Include .files when globbing.
 shopt -s dotglob
-# When a glob expands to nothing, make it an empty string instead of the literal characters.
-# (disabled because it screws up tab-completion somehow...)
-#shopt -s nullglob
-# fix spelling errors for cd, only in interactive shell
 shopt -s cdspell
-# vi mode
-set -o vi
 export EDITOR=vim
 
-# Large history
 export HISTFILESIZE=20000
 export HISTSIZE=10000
 shopt -s histappend
-# Combine multiline commands into one in history
 shopt -s cmdhist
-# Ignore duplicates, ls without options and builtin commands
 HISTCONTROL=ignoredups
 export HISTIGNORE="&:ls:[bf]g:exit"
 
-# Solarized dircolors
-eval `dircolors ~/dotfiles/dircolors-solarized/dircolors.ansi-dark`
+eval `dircolors ~/etc/metachrome.dircolors`
 
 # Aliases
 # ------------------------------------------------------------
@@ -53,64 +41,75 @@ alias xpaste='xclip -o -selection clipboard'
 # Prompt
 # ------------------------------------------------------------
 
-source ~/dotfiles/git-prompt.sh
+source ~/etc/scripts/git-prompt.sh
+
+Color_Reset='\[\033[0;37m\]'
 
 if [ "$TERM" == "linux" ]; then
-  # Use ASCII symbols
+  # Use ASCII symbols and standard ANSI colors
   Symbol_LBracket="["
   Symbol_RBracket="]"
   Symbol_Ellipsis="..."
+  Symbol_Prompt=" $ "
+
+  Color_Bracket='\[\033[1;37m\]'
+  Color_Hostname='\[\033[1;37m\]'
+  Color_Directory='\[\033[35m\]'
+  Color_Git='\[\033[32m\]'
+  Color_Success='\[\033[33m\]'
+  Color_Failure='\[\033[31m\]'
 else
-  # Use Unicode symbols
-  Symbol_LBracket="‹"
-  Symbol_RBracket="›"
+  # Use Unicode symbols and metachrome colors
+  Symbol_LBracket="❮"
+  Symbol_RBracket="❯"
   Symbol_Ellipsis="…"
+  Symbol_Prompt=" — "
+
+  Color_Bracket='\[\033[94m\]'
+  Color_Hostname='\[\033[35m\]'
+  Color_Directory='\[\033[34m\]'
+  Color_Git='\[\033[32m\]'
+  Color_Success='\[\033[35m\]'
+  Color_Failure='\[\033[91m\]'
 fi
 
 set_prompt() {
   local Last_Command=$?
   local Current_Directory=$(pwd)
-  local Bracket_Color='\[\033[1;37;40m\]'
-  local Hostname_Color='\[\033[1;33;40m\]'
-  local Directory_Color='\[\033[34m\]'
-  local Git_Color='\[\033[33m\]'
-  local Success_Color='\[\033[32m\]'
-  local Failure_Color='\[\033[31m\]'
-  local Reset_Color='\[\033[0;37m\]'
 
   # Window title
   PS1='\[\033]0;\u@\h:${PWD//[^[:ascii:]]/?}\007\]'
   
   # [user@host]
-  PS1+="$Bracket_Color$Symbol_LBracket"
-  PS1+="$Hostname_Color"'\u@\h'
-  PS1+="$Bracket_Color$Symbol_RBracket"
-  PS1+="$Reset_Color"
+  PS1+="$Color_Bracket$Symbol_LBracket"
+  PS1+="$Color_Hostname"'\u@\h'
+  PS1+="$Color_Bracket$Symbol_RBracket"
+  PS1+="$Color_Reset "
   
   # Working directory
-  PS1+="$Directory_Color "
+  PS1+="$Color_Directory"
   case "$Current_Directory" in
     $HOME) PS1+='~';;
     '/') PS1+='/';;
     /[!-.0-~]) PS1+="$Current_Directory";;
     *) PS1+="$Symbol_Ellipsis/$(basename "$Current_Directory")";;
   esac
-  PS1+="$Reset_Color"
+  PS1+="$Color_Reset"
   
   # Git branch
   if command -v git >/dev/null 2>&1; then
-    PS1+="$Git_Color$(__git_ps1)$Reset_Color"
+    PS1+="$Color_Git$(__git_ps1)$Color_Reset"
   fi
 
   # Colorized dash based on last command's exit code
   if [[ $Last_Command == 0 ]]; then
-    PS1+="$Success_Color"
+    PS1+="$Color_Success"
   else
-    PS1+="$Failure_Color"
+    PS1+="$Color_Failure"
   fi
-  PS1+=" -$Reset_Color "
+  PS1+="$Symbol_Prompt$Color_Reset"
 }
 
 PROMPT_COMMAND='set_prompt'
-PS2='\[\033[1;33m\]'"$Symbol_Ellipsis "'\[\033[0;37m\]'
+PS2="$Color_Success$Symbol_Ellipsis$Color_Reset "
 

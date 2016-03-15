@@ -1,8 +1,8 @@
 set nocompatible
 filetype off
 
-set rtp+=~/dotfiles/vim/bundle/Vundle.vim
-call vundle#begin('~/dotfiles/vim/bundle')
+set rtp+=~/etc/vim/bundle/Vundle.vim
+call vundle#begin('~/etc/vim/bundle')
 
 Plugin 'gmarik/Vundle.vim'
 Plugin 'tpope/vim-sensible'
@@ -21,7 +21,7 @@ Plugin 'PProvost/vim-ps1'
 Plugin 'derekwyatt/vim-scala'
 Plugin 'wb14123/vim-stylish-haskell'
 Plugin 'elzr/vim-json'
-Plugin 'ar-nelson/vim-colors-solarized'
+Plugin 'ar-nelson/metachrome.vim'
 Plugin 'bling/vim-airline'
 Plugin 'vim-latex/vim-latex'
 
