@@ -5,7 +5,7 @@ set rtp+=~/etc/vim/bundle/Vundle.vim
 call vundle#begin('~/etc/vim/bundle')
 
 Plugin 'gmarik/Vundle.vim'
-Plugin 'ar-nelson/metachrome.vim'
+Plugin 'ar-nelson/teal-orange.vim'
 Plugin 'tpope/vim-sensible'
 Plugin 'tpope/vim-surround'
 Plugin 'tpope/vim-fugitive'

@@ -1,0 +1,67 @@
+# M E T A C H R O M E
+# ~~~~~~~~~~~~~~~~~~~
+#   DIRCOLORS FILE
+
+COLOR tty
+EIGHTBIT 1
+
+# normal files
+NORMAL 00
+FILE 00
+
+# directories (bold, teal)
+DIR 1;36
+OTHER_WRITABLE 1;36;100
+
+# links (orange)
+LINK 33
+
+# devices (inverted)
+FIFO 90;46
+SOCK 90;46
+DOOR 90;46
+BLK  90;46
+CHR  90;46
+
+# broken links (underlined red)
+ORPHAN  4;91
+MISSING 4;91
+
+# executable files (yellowish)
+EXEC 35
+.cmd 35
+.exe 35
+.com 35
+.bat 35
+.reg 35
+.app 35
+
+# archives (bold, yellowish)
+.7z   1;35
+.apk  1;35
+.arj  1;35
+.bin  1;35
+.bz   1;35
+.bz2  1;35
+.cab  1;35
+.deb  1;35
+.dmg  1;35
+.gem  1;35
+.gz   1;35
+.iso  1;35
+.jar  1;35
+.msi  1;35
+.rar  1;35
+.rpm  1;35
+.tar  1;35
+.tbz  1;35
+.tbz2 1;35
+.tgz  1;35
+.tx   1;35
+.war  1;35
+.xpi  1;35
+.xz   1;35
+.z    1;35
+.Z    1;35
+.zip  1;35
+

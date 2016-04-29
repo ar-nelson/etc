@@ -19,7 +19,7 @@ shopt -s cmdhist
 HISTCONTROL=ignoredups
 export HISTIGNORE="&:ls:[bf]g:exit"
 
-eval `dircolors ~/etc/metachrome.dircolors`
+eval `dircolors ~/etc/teal-orange.dircolors`
 
 # Aliases
 # ------------------------------------------------------------
@@ -59,17 +59,17 @@ if [ "$TERM" == "linux" ]; then
   Color_Success='\[\033[33m\]'
   Color_Failure='\[\033[31m\]'
 else
-  # Use Unicode symbols and metachrome colors
+  # Use Unicode symbols and teal-orange colors
   Symbol_LBracket="❮"
   Symbol_RBracket="❯"
   Symbol_Ellipsis="…"
   Symbol_Prompt=" — "
 
-  Color_Bracket='\[\033[94m\]'
-  Color_Hostname='\[\033[35m\]'
-  Color_Directory='\[\033[34m\]'
-  Color_Git='\[\033[32m\]'
-  Color_Success='\[\033[35m\]'
+  Color_Bracket='\[\033[34m\]'
+  Color_Hostname='\[\033[36m\]'
+  Color_Directory='\[\033[32m\]'
+  Color_Git='\[\033[33m\]'
+  Color_Success='\[\033[96m\]'
   Color_Failure='\[\033[91m\]'
 fi
 
