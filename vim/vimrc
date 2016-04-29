@@ -139,9 +139,10 @@ endif
 
 " Syntastic
 let g:syntastic_mode_map = { 'mode': 'passive',
-	\ 'active_filetypes': ['javascript', 'haskell', 'lhaskell'],
+	\ 'active_filetypes': ['javascript', 'typescript', 'haskell', 'lhaskell'],
 	\ 'passive_filetypes': ['c', 'java', 'groovy', 'scala'] }
-let g:syntastic_javascript_checkers = ['jshint']
+let g:syntastic_javascript_checkers = ['eslint']
+let g:syntastic_typescript_checkers = ['tslint']
 
 " VimCompletesMe
 set completeopt-=preview
@@ -153,7 +154,8 @@ set wildignore+=*.pyc,*.png,*.jpg,*.gif,*.PNG,*.JPG,*.GIF,*.pdf,*.o,*.obj,.hg
 set wildignore+=*/Archive/*,*.jar,*.class,*.doc,*.rtf,*.ppt,*.zip,*.gz,*.bz2
 set wildignore+=*.lzma,*.7z,*.exe,*.dll,*.so.*,*~,*.wav,*.mp3,*.flac,*.ogg
 set wildignore+=*.ttf,*.mpg,*.avi,*.MPG,*.AVI,*.mp4,*.divx,*.wma,*.wmv
-set wildignore+=*.a,*.hi,*/target/*,*/build/*,*/dist/*,*/node_modules/*
+set wildignore+=*.a,*.hi,*/target/*,*/build/*,*/dist/*,*/node_modules/*,*.d.ts
+set wildignore+=*Theory.sml,*Theory.sig,*Theory.ui,*Theory.uo " For HOL4
 
 " }}} -----------------------------------------------------
 " Haskell {{{ -------------------------------------

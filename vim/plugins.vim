@@ -32,6 +32,8 @@ Plugin 'jason0x43/vim-js-indent'
 Plugin 'Shougo/vimproc.vim'
 Plugin 'Quramy/tsuquyomi'
 Plugin 'ajh17/VimCompletesMe'
+Plugin 'cypok/vim-sml'
+Plugin 'othree/yajs.vim' 
 
 call vundle#end()
 filetype plugin indent on
