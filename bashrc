@@ -19,6 +19,8 @@ shopt -s cmdhist
 HISTCONTROL=ignoredups
 export HISTIGNORE="&:ls:[bf]g:exit"
 
+PATH="~/bin:$PATH"
+
 eval `dircolors ~/etc/teal-orange.dircolors`
 
 # Aliases
