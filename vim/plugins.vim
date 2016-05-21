@@ -33,7 +33,9 @@ Plugin 'Shougo/vimproc.vim'
 Plugin 'Quramy/tsuquyomi'
 Plugin 'ajh17/VimCompletesMe'
 Plugin 'cypok/vim-sml'
-Plugin 'othree/yajs.vim' 
+Plugin 'ar-nelson/vim-syntax-hol4'
+Plugin 'othree/yajs.vim'
+Plugin 'othree/es.next.syntax.vim'
 
 call vundle#end()
 filetype plugin indent on
