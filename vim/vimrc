@@ -89,6 +89,19 @@ autocmd FileType tex call SetWrap()
 set showbreak=…
 
 " }}} -----------------------------------------------------
+" Status Line {{{ -----------------------------------------
+
+set statusline=   " clear the statusline for when vimrc is reloaded
+set statusline+=#%n\                         " buffer number
+set statusline+=%f\                          " file name
+set statusline+=%h%m%r%w                     " flags
+set statusline+=[%{strlen(&ft)?&ft:'none'},  " filetype
+set statusline+=%{strlen(&fenc)?&fenc:&enc}, " encoding
+set statusline+=%{&fileformat}]\             " file format
+set statusline+=%=                           " right align
+set statusline+=line\ %l,\ col\ %c\ \|\ %<%P " offset
+
+" }}} -----------------------------------------------------
 " Backup, Swap, and Undo Directories {{{ ------------------
 
 set backup
