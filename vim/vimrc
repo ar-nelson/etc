@@ -44,6 +44,9 @@ set gdefault
 set textwidth=80
 set formatoptions=cjqrn1
 
+" Sensible options for omni select
+set completeopt=longest,menuone
+
 " }}} -----------------------------------------------------
 " Appearance {{{ ------------------------------------------
 
@@ -232,9 +235,8 @@ noremap <C-c> "+y
 noremap <C-x> "+d
 noremap <C-v> "+p
 
-" Alias Vim's C-v to C-q, like mswin.vim.
-noremap <C-q> <C-v> 
-inoremap <C-q> <C-v> 
+" (Because CTRL-v is taken, use \v for block select)
+noremap <Leader>v <C-v> 
 
 " Open VIMRC with one command.
 nnoremap <Leader>rc  :e ~/etc/vim/vimrc<CR> 
@@ -301,6 +303,17 @@ noremap , ;
 inoremap <F1> <ESC>
 nnoremap <F1> <ESC>
 vnoremap <F1> <ESC>
+
+" CTRL-W shortcuts to match my tmux CTRL-A ones
+noremap <C-w>- <C-w>s
+noremap <C-w>\| <C-w>v
+
+" Show omni completion with CTRL-Space
+inoremap <C-Space> <C-x><C-o>
+inoremap <C-@> <C-x><C-o>
+
+" Select from the completion menu with Enter
+inoremap <expr> <CR> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
 
 " }}} -----------------------------------------------------
 
