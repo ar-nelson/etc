@@ -52,6 +52,7 @@ if [ "$TERM" == "linux" ]; then
   Symbol_LBracket="["
   Symbol_RBracket="]"
   Symbol_Ellipsis="..."
+  Symbol_Jobs="*"
   Symbol_Prompt=" $ "
 
   Color_Bracket='\[\033[1;37m\]'
@@ -65,12 +66,15 @@ else
   Symbol_LBracket="❮"
   Symbol_RBracket="❯"
   Symbol_Ellipsis="…"
+  Symbol_Jobs="⚐"
   Symbol_Prompt=" ⊐ "
 
   Color_Bracket='\[\033[34m\]'
   Color_Hostname='\[\033[36m\]'
   Color_Directory='\[\033[32m\]'
   Color_Git='\[\033[33m\]'
+  Color_Job_Sym='\[\033[35;1m\]'
+  Color_Job_Count='\[\033[35;0m\]'
   Color_Success='\[\033[96m\]'
   Color_Failure='\[\033[91m\]'
 fi
@@ -101,6 +105,11 @@ set_prompt() {
   # Git branch
   if command -v git >/dev/null 2>&1; then
     PS1+="$Color_Git$(__git_ps1)$Color_Reset"
+  fi
+
+  # Background jobs
+  if [ -n "$(jobs -p)" ]; then
+    PS1+=" $Color_Job_Sym$Symbol_Jobs$Color_Job_Count\\j$Color_Reset"
   fi
 
   # Colorized dash based on last command's exit code
