@@ -52,8 +52,7 @@ if [ "$TERM" == "linux" ]; then
   Symbol_LBracket="["
   Symbol_RBracket="]"
   Symbol_Ellipsis="..."
-  Symbol_Prompt_Success=" $ "
-  Symbol_Prompt_Failure=" $ "
+  Symbol_Prompt=" $ "
 
   Color_Bracket='\[\033[1;37m\]'
   Color_Hostname='\[\033[1;37m\]'
@@ -66,8 +65,7 @@ else
   Symbol_LBracket="❮"
   Symbol_RBracket="❯"
   Symbol_Ellipsis="…"
-  Symbol_Prompt_Success=" ⊐ "
-  Symbol_Prompt_Failure=" ⋣ "
+  Symbol_Prompt=" ⊐ "
 
   Color_Bracket='\[\033[34m\]'
   Color_Hostname='\[\033[36m\]'
@@ -107,9 +105,9 @@ set_prompt() {
 
   # Colorized dash based on last command's exit code
   if [[ $Last_Command == 0 ]]; then
-    PS1+="$Color_Success$Symbol_Prompt_Success"
+    PS1+="$Color_Success$Symbol_Prompt"
   else
-    PS1+="$Color_Failure$Symbol_Prompt_Failure"
+    PS1+="$Color_Failure$Symbol_Prompt"
   fi
   PS1+="$Color_Reset"
 }
