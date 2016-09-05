@@ -10,7 +10,7 @@ Plugin 'tpope/vim-sensible'
 Plugin 'tpope/vim-surround'
 Plugin 'tpope/vim-fugitive'
 Plugin 'chip/vim-fat-finger'
-Plugin 'Townk/vim-autoclose'
+"Plugin 'Townk/vim-autoclose'
 Plugin 'rking/ag.vim'
 Plugin 'kien/ctrlp.vim'
 Plugin 'kien/rainbow_parentheses.vim'
@@ -36,6 +36,8 @@ Plugin 'cypok/vim-sml'
 Plugin 'ar-nelson/vim-syntax-hol4'
 Plugin 'othree/yajs.vim'
 Plugin 'othree/es.next.syntax.vim'
+Plugin 'othree/html5.vim'
+Plugin 'groenewege/vim-less'
 
 call vundle#end()
 filetype plugin indent on
