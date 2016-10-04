@@ -1,4 +1,5 @@
 vim/bundle/**
 !vim/bundle/Vundle.vim
+vim/hol4/fifo
 *.swp
 *~

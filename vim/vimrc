@@ -205,6 +205,7 @@ au BufRead,BufNewFile *.txt set filetype=txt
 au BufRead,BufNewFile *.md set filetype=markdown
 au BufRead,BufNewFile *.gradle set filetype=gradle
 au BufRead,BufNewFile *.sig set filetype=sml
+au BufRead,BufNewFile *?Script.sml let maplocalleader = "h" | source ~/etc/vim/hol4/hol.vim
 autocmd FileType java set tw=100
 autocmd FileType scala set tw=100
 autocmd FileType json setl formatprg=jq\ .\ -
