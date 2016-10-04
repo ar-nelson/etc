@@ -38,6 +38,7 @@ Plugin 'othree/yajs.vim'
 Plugin 'othree/es.next.syntax.vim'
 Plugin 'othree/html5.vim'
 Plugin 'groenewege/vim-less'
+Plugin 'vim-scripts/gitignore'
 
 call vundle#end()
 filetype plugin indent on
