@@ -4,6 +4,12 @@
 ##   Adam Nelson's bashrc   ##
 ##############################
 
+# If not running interactively, don't do anything
+case $- in
+    *i*) ;;
+      *) return;;
+esac
+
 # Options
 # ------------------------------------------------------------
 
@@ -16,7 +22,8 @@ export HISTFILESIZE=20000
 export HISTSIZE=10000
 shopt -s histappend
 shopt -s cmdhist
-HISTCONTROL=ignoredups
+shopt -s checkwinsize
+HISTCONTROL=ignoreboth
 export HISTIGNORE="&:ls:[bf]g:exit"
 
 PATH="~/bin:$PATH"
