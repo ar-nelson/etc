@@ -17,6 +17,7 @@ shopt -s extglob
 shopt -s dotglob
 shopt -s cdspell
 export EDITOR=vim
+export VIMHOL_FIFO="$HOME/etc/vim/hol4/fifo"
 
 export HISTFILESIZE=20000
 export HISTSIZE=10000
