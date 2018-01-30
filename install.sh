@@ -16,5 +16,7 @@ cp -b $STAGING_DIR/.* ~/
 rm -rf $STAGING_DIR
 ~/etc/scripts/git-colors.sh
 mkfifo ~/etc/vim/hol4/fifo
+mkdir -p ~/.vim/autoload
+cp ~/etc/vim/vim-plug.vim ~/.vim/autoload/plug.vim
 echo "Installation complete."
 
