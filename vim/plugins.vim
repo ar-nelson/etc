@@ -4,12 +4,11 @@ filetype off
 call plug#begin('~/.vim/bundle')
 
 Plug 'gmarik/Vundle.vim'
-Plug 'ar-nelson/teal-orange.vim'
+Plug 'nanotech/jellybeans.vim'
 Plug 'tpope/vim-sensible'
 Plug 'tpope/vim-surround'
 Plug 'tpope/vim-fugitive'
 Plug 'chip/vim-fat-finger'
-"Plug 'Townk/vim-autoclose'
 Plug 'rking/ag.vim'
 Plug 'kien/ctrlp.vim'
 Plug 'kien/rainbow_parentheses.vim'

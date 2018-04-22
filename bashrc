@@ -29,8 +29,6 @@ export HISTIGNORE="&:ls:[bf]g:exit"
 
 PATH="~/bin:$PATH"
 
-eval `dircolors ~/etc/teal-orange.dircolors`
-
 # Aliases
 # ------------------------------------------------------------
 
@@ -53,38 +51,21 @@ alias xpaste='xclip -o -selection clipboard'
 
 source ~/etc/scripts/git-prompt.sh
 
-Color_Reset='\[\033[0;37m\]'
+Color_Reset='\[\033[0m\]'
+Color_Directory='\[\033[90m\]'
+Color_Success='\[\033[93m\]'
+Color_Failure='\[\033[33m\]'
+Color_Git='\[\033[32m\]'
+Color_Jobs='\[\033[91m\]'
 
 if [ "$TERM" == "linux" ]; then
-  # Use ASCII symbols and standard ANSI colors
-  Symbol_LBracket="["
-  Symbol_RBracket="]"
+  # Use ASCII symbols
   Symbol_Ellipsis="..."
   Symbol_Jobs="*"
-  Symbol_Prompt=" $ "
-
-  Color_Bracket='\[\033[1;37m\]'
-  Color_Hostname='\[\033[1;37m\]'
-  Color_Directory='\[\033[35m\]'
-  Color_Git='\[\033[32m\]'
-  Color_Success='\[\033[33m\]'
-  Color_Failure='\[\033[31m\]'
 else
-  # Use Unicode symbols and teal-orange colors
-  Symbol_LBracket="❮"
-  Symbol_RBracket="❯"
+  # Use Unicode symbols
   Symbol_Ellipsis="…"
   Symbol_Jobs="⚐"
-  Symbol_Prompt=" ⊐ "
-
-  Color_Bracket='\[\033[34m\]'
-  Color_Hostname='\[\033[36m\]'
-  Color_Directory='\[\033[32m\]'
-  Color_Git='\[\033[33m\]'
-  Color_Job_Sym='\[\033[35;1m\]'
-  Color_Job_Count='\[\033[35;0m\]'
-  Color_Success='\[\033[96m\]'
-  Color_Failure='\[\033[91m\]'
 fi
 
 set_prompt() {
@@ -93,12 +74,6 @@ set_prompt() {
 
   # Window title
   PS1='\[\033]0;\u@\h:${PWD//[^[:ascii:]]/?}\007\]'
-  
-  # [user@host]
-  PS1+="$Color_Bracket$Symbol_LBracket"
-  PS1+="$Color_Hostname"'\u@\h'
-  PS1+="$Color_Bracket$Symbol_RBracket"
-  PS1+="$Color_Reset "
   
   # Working directory
   PS1+="$Color_Directory"
@@ -117,16 +92,16 @@ set_prompt() {
 
   # Background jobs
   if [ -n "$(jobs -p)" ]; then
-    PS1+=" $Color_Job_Sym$Symbol_Jobs$Color_Job_Count\\j$Color_Reset"
+    PS1+=" $Color_Jobs$Symbol_Jobs\\j$Color_Reset"
   fi
 
   # Colorized dash based on last command's exit code
   if [[ $Last_Command == 0 ]]; then
-    PS1+="$Color_Success$Symbol_Prompt"
+    PS1+=" $Color_Success->"
   else
-    PS1+="$Color_Failure$Symbol_Prompt"
+    PS1+=" $Color_Failure~>"
   fi
-  PS1+="$Color_Reset"
+  PS1+="$Color_Reset "
 }
 
 PROMPT_COMMAND='set_prompt'

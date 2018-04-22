@@ -51,10 +51,7 @@ set completeopt=longest,menuone
 " Appearance {{{ ------------------------------------------
 
 " Set the color scheme.
-if !has('gui_running')
-  set t_Co=16
-endif
-colors teal-orange
+colors jellybeans
 set cursorline
 set background=dark
 
