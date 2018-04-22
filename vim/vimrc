@@ -26,6 +26,7 @@ set noerrorbells
 set visualbell
 set t_vb=
 au GUIEnter * set vb t_vb=
+set shortmess+=I
 
 " Use spaces instad of tabs. Indent 2 spaces by default.
 set expandtab
@@ -33,6 +34,11 @@ set shiftwidth=2
 set softtabstop=2
 set tabstop=8
 filetype plugin indent on
+
+" Scroll before the cursor reaches the edge of the window.
+set scrolloff=8
+set sidescroll=1
+set sidescrolloff=15
 
 " Don't close the current buffer when opening a new one.
 set hidden
@@ -47,13 +53,20 @@ set formatoptions=cjqrn1
 " Sensible options for omni select
 set completeopt=longest,menuone
 
+" Default window dimensions
+set winwidth=79
+set winheight=5
+set winminheight=5
+
+" Set the console window title
+set title
+
 " }}} -----------------------------------------------------
 " Appearance {{{ ------------------------------------------
 
 " Set the color scheme.
 colors jellybeans
 set cursorline
-set background=dark
 
 " Always show line numbers.
 set number
@@ -70,7 +83,8 @@ set nowrap
 
 " HOWEVER, enable line wrapping for plaintext, Markdown, and TeX files!
 function! SetWrap()
-  setlocal wrap linebreak nolist textwidth=0 wrapmargin=0
+  setlocal wrap linebreak nolist
+  setlocal formatoptions+=t
   nnoremap <Up> gk
   nnoremap <Down> gj
   vnoremap <Up> gk
@@ -78,6 +92,7 @@ function! SetWrap()
 endfunction
 function! SetNoWrap()
   setlocal nowrap
+  setlocal formatoptions-=t
   nnoremap <Up> k
   nnoremap <Down> j
   vnoremap <Up> k
@@ -87,19 +102,6 @@ autocmd FileType txt call SetWrap()
 autocmd FileType markdown call SetWrap()
 autocmd FileType tex call SetWrap()
 set showbreak=…
-
-" }}} -----------------------------------------------------
-" Status Line {{{ -----------------------------------------
-
-set statusline=   " clear the statusline for when vimrc is reloaded
-set statusline+=#%n\                         " buffer number
-set statusline+=%f\                          " file name
-set statusline+=%h%m%r%w                     " flags
-set statusline+=[%{strlen(&ft)?&ft:'none'},  " filetype
-set statusline+=%{strlen(&fenc)?&fenc:&enc}, " encoding
-set statusline+=%{&fileformat}]\             " file format
-set statusline+=%=                           " right align
-set statusline+=line\ %l,\ col\ %c\ \|\ %<%P " offset
 
 " }}} -----------------------------------------------------
 " Backup, Swap, and Undo Directories {{{ ------------------
@@ -150,18 +152,32 @@ endif
 " }}} -----------------------------------------------------
 " Plugin Options {{{ -----------------------------------
 
-" Syntastic
-let g:syntastic_mode_map = { 'mode': 'passive',
-	\ 'active_filetypes': ['javascript', 'typescript', 'haskell', 'lhaskell'],
-	\ 'passive_filetypes': ['c', 'java', 'groovy', 'scala'] }
-let g:syntastic_javascript_checkers = ['eslint']
-let g:syntastic_typescript_checkers = ['tslint']
+" Polyglot
+let g:polyglot_disabled = ['haskell', 'typescript']
+
+" Airline
+let g:airline_powerline_fonts = 1
+let g:airline_theme = 'jellybeans'
+
+" ALE
+let g:ale_sign_error = '✘→'
+let g:ale_sign_warning = '!→'
 
 " VimCompletesMe
 set completeopt-=preview
 autocmd FileType javascript,typescript let b:vcm_tab_complete = 'omni'
 
 " Ctrl-P
+let g:ctrlp_use_caching = 0
+if executable('ag')
+  set grepprg=ag\ --nogroup\ --nocolor
+  let g:ctrlp_user_command = 'ag %s -l --nocolor -g "" --ignore *.png --ignore *.jpg --ignore *.zip'
+else
+  let g:ctrlp_user_command = ['.git',
+    \ 'cd %s && git ls-files . -co --exclude-standard',
+    \ 'find %s -type f']
+endif
+
 let g:ctrlp_match_window_reversed = 0
 set wildignore+=*.pyc,*.png,*.jpg,*.gif,*.PNG,*.JPG,*.GIF,*.pdf,*.o,*.obj,.hg
 set wildignore+=*/Archive/*,*.jar,*.class,*.doc,*.rtf,*.ppt,*.zip,*.gz,*.bz2
@@ -193,10 +209,18 @@ function! FindCabalSandboxRootPackageConf()
     return glob(FindCabalSandboxRoot().'/*-packages.conf.d')
 endfunction
 
-let g:syntastic_haskell_hdevtools_args = '-g-ilib -g-isrc -g-i. -g-idist/build/autogen -g-Wall -g-package-conf='.FindCabalSandboxRootPackageConf()
-
 " }}} -----------------------------------------------------
 " Misc. Languages {{{ -------------------------------------
+
+function! TypescriptLocalSettings()
+  set ballooneval
+  setlocal balloonexpr=tsuquyomi#balloonexpr()
+  let g:vcm_omni_pattern='.'
+  nnoremap <buffer> K :echo tsuquyomi#hint()<CR>
+  nnoremap <buffer> <localleader>q :TsuQuickFix<CR>
+  nnoremap <buffer> <localleader>q :TsuDefinition<CR>
+  nnoremap <buffer> <localleader>q :TsuRenameSymbol<CR>
+endfunction
 
 au BufRead,BufNewFile *.txt set filetype=txt
 au BufRead,BufNewFile *.md set filetype=markdown
@@ -206,37 +230,30 @@ au BufRead,BufNewFile *?Script.sml source ~/etc/vim/hol4/hol.vim
 autocmd FileType java set tw=100
 autocmd FileType scala set tw=100
 autocmd FileType json setl formatprg=jq\ .\ -
+autocmd FileType typescript call TypescriptLocalSettings()
 
 let g:tex_flavor='latex'
 
 " }}} -----------------------------------------------------
 " Key Mappings {{{ ----------------------------------------
 
+let mapleader = '\'
 let maplocalleader = ' '
 
 " Shortcuts for plugin commands.
 let g:ctrlp_map = '<Leader>p'
 nnoremap <Leader><Leader> :CtrlPBuffer<CR>
+nnoremap <Leader>t :CtrlPTags<CR>
 nnoremap <Leader>n :NERDTree<CR>
 nnoremap <Leader>r :RainbowParenthesesToggleAll<CR>
 nnoremap <Leader>/ :CtrlPLine<CR>
 nnoremap <Leader>a :Ag
 nnoremap <Leader>q gqip
 nnoremap <Leader>w <C-w>v<C-w>l
-nnoremap <Leader><Tab> :Scratch<CR>
+set pastetoggle=<Leader>v
 au FileType haskell,lhaskell nnoremap <buffer> <leader>ht :HdevtoolsType<CR>
 au FileType haskell,lhaskell nnoremap <buffer> <leader>hi :HdevtoolsInfo<CR>
 au FileType haskell,lhaskell nnoremap <buffer> <silent> <leader>hc :HdevtoolsClear<CR>
-
-" Use Windows-style CTRL-shortcuts.
-nnoremap <C-a> ggVG
-nnoremap <C-s> :w<CR>
-noremap <C-c> "+y
-noremap <C-x> "+d
-noremap <C-v> "+p
-
-" (Because CTRL-v is taken, use \v for block select)
-noremap <Leader>v <C-v> 
 
 " Open VIMRC with one command.
 nnoremap <Leader>rc  :e ~/etc/vim/vimrc<CR> 
@@ -280,19 +297,9 @@ nnoremap N Nzz
 " c-Space: Change current word.
 " d-Space: Delete current word.
 " y-Space: Copy current word.
-" P-Space: Paste over current word, but keep the same paste register!
 nnoremap c<Space> ciw
 nnoremap d<Space> diw
 nnoremap y<Space> yiw
-nnoremap P<Space> bvepbyee
-
-" Improved pasting for fun and profit:
-" Captial Y becomes y$ instead of yy.
-" Capital P becomes a prefix.
-" PP to replace a line, Pp for old functionality.
-noremap Y y$
-nnoremap PP VpVy
-nnoremap Pp P
 
 " Map semicolon to colon, to reduce finger strain.
 " The (unused) comma key replaces the semicolon.
@@ -314,6 +321,30 @@ inoremap <C-@> <C-x><C-o>
 
 " Select from the completion menu with Enter
 inoremap <expr> <CR> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
+
+" Visually select the text that was last edited/pasted (Vimcast#26).
+noremap gV `[v`]
+
+" Y yanks from the cursor to the end of line as expected.
+nnoremap Y y$
+
+" Make sure pasting in visual mode doesn't replace paste buffer
+function! RestoreRegister()
+  let @" = s:restore_reg
+  return ''
+endfunction
+function! s:Repl()
+  let s:restore_reg = @"
+  return "p@=RestoreRegister()\<cr>"
+endfunction
+vmap <silent> <expr> p <sid>Repl()
+
+" Forgot-to-unshift versions of :q, :qa, :w, :wq, :wa
+command Q :q
+command Qa :qa
+command W :w
+command Wq :wq
+command Wa :wa
 
 " }}} -----------------------------------------------------
 
