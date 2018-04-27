@@ -158,6 +158,11 @@ let g:polyglot_disabled = ['haskell', 'typescript']
 " Airline
 let g:airline_powerline_fonts = 1
 let g:airline_theme = 'jellybeans'
+let g:airline_skip_empty_sections = 1
+let g:airline_inactive_collapse = 1
+let g:airline_detect_spelllang = 0
+let g:airline_highlighting_cache = 1
+let g:airline_section_y = ''
 
 " ALE
 let g:ale_sign_error = '✘→'
@@ -218,8 +223,8 @@ function! TypescriptLocalSettings()
   let g:vcm_omni_pattern='.'
   nnoremap <buffer> K :echo tsuquyomi#hint()<CR>
   nnoremap <buffer> <localleader>q :TsuQuickFix<CR>
-  nnoremap <buffer> <localleader>q :TsuDefinition<CR>
-  nnoremap <buffer> <localleader>q :TsuRenameSymbol<CR>
+  nnoremap <buffer> <localleader>d :TsuDefinition<CR>
+  nnoremap <buffer> <localleader>r :TsuRenameSymbol<CR>
 endfunction
 
 au BufRead,BufNewFile *.txt set filetype=txt
@@ -256,13 +261,13 @@ au FileType haskell,lhaskell nnoremap <buffer> <leader>hi :HdevtoolsInfo<CR>
 au FileType haskell,lhaskell nnoremap <buffer> <silent> <leader>hc :HdevtoolsClear<CR>
 
 " Open VIMRC with one command.
-nnoremap <Leader>rc  :e ~/etc/vim/vimrc<CR> 
+nnoremap <Leader>rc  :e ~/etc/vim/vimrc<CR>
 
 " Source a modified VIMRC with one command as well.
 nnoremap <Leader>src :so ~/etc/vim/vimrc<CR>
 
 " Open help in a vertical split with :vhelp.
-cabbrev vhelp botright vert h 
+cabbrev vhelp botright vert h
 
 " Fix the arrow keys bug in visual mode.
 vnoremap <Left>  h
@@ -271,14 +276,14 @@ vnoremap <Up>    k
 vnoremap <Down>  j
 
 " Map CTRL+arrow keys and CTRL+hjkl to switch windows.
-nnoremap <C-Left>  <C-w>h 
-nnoremap <C-Down>  <C-w>j 
-nnoremap <C-Up>    <C-w>k 
-nnoremap <C-Right> <C-w>l 
-nnoremap <C-h> <C-w>h 
-nnoremap <C-j> <C-w>j 
-nnoremap <C-k> <C-w>k 
-nnoremap <C-l> <C-w>l 
+nnoremap <C-Left>  <C-w>h
+nnoremap <C-Down>  <C-w>j
+nnoremap <C-Up>    <C-w>k
+nnoremap <C-Right> <C-w>l
+nnoremap <C-h> <C-w>h
+nnoremap <C-j> <C-w>j
+nnoremap <C-k> <C-w>k
+nnoremap <C-l> <C-w>l
 
 " Use \x to close the current buffer without closing the window.
 nnoremap <Leader>x :bp\|bd #<CR>
