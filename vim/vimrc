@@ -85,23 +85,23 @@ set nowrap
 function! SetWrap()
   setlocal wrap linebreak nolist
   setlocal formatoptions+=t
-  nnoremap <Up> gk
-  nnoremap <Down> gj
-  vnoremap <Up> gk
-  vnoremap <Down> gj
+  nnoremap <buffer> <Up> gk
+  nnoremap <buffer> <Down> gj
+  vnoremap <buffer> <Up> gk
+  vnoremap <buffer> <Down> gj
+  inoremap <buffer> <Up> <C-o>gk
+  inoremap <buffer> <Down> <C-o>gj
 endfunction
 function! SetNoWrap()
   setlocal nowrap
   setlocal formatoptions-=t
-  nnoremap <Up> k
-  nnoremap <Down> j
-  vnoremap <Up> k
-  vnoremap <Down> j
+  unmap <buffer> <Up>
+  unmap <buffer> <Down>
 endfunction
 autocmd FileType txt call SetWrap()
 autocmd FileType markdown call SetWrap()
 autocmd FileType tex call SetWrap()
-set showbreak=…
+"set showbreak=…
 
 " }}} -----------------------------------------------------
 " Backup, Swap, and Undo Directories {{{ ------------------
