@@ -253,8 +253,11 @@ nnoremap <Leader>n :NERDTree<CR>
 nnoremap <Leader>r :RainbowParenthesesToggleAll<CR>
 nnoremap <Leader>/ :CtrlPLine<CR>
 nnoremap <Leader>a :Ag
-nnoremap <Leader>q gqip
 nnoremap <Leader>w <C-w>v<C-w>l
+nnoremap <Leader>d :ALEGoToDefinition<CR>
+nnoremap <Leader>q :ALEFix<CR>
+nnoremap <Leader>] :ALENextWrap<CR>
+nnoremap <Leader>[ :ALEPreviousWrap<CR>
 set pastetoggle=<Leader>v
 au FileType haskell,lhaskell nnoremap <buffer> <leader>ht :HdevtoolsType<CR>
 au FileType haskell,lhaskell nnoremap <buffer> <leader>hi :HdevtoolsInfo<CR>
@@ -343,6 +346,9 @@ function! s:Repl()
   return "p@=RestoreRegister()\<cr>"
 endfunction
 vmap <silent> <expr> p <sid>Repl()
+
+" Use Q to show error detail
+noremap Q :ALEDetail<CR>
 
 " Forgot-to-unshift versions of :q, :qa, :w, :wq, :wa
 command Q :q
