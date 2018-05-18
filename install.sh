@@ -9,6 +9,7 @@ echo "Installing dotfiles..."
 ln -s ~/etc/bashrc $STAGING_DIR/.bashrc
 ln -s ~/etc/tmux.conf $STAGING_DIR/.tmux.conf
 ln -s ~/etc/ghci.conf $STAGING_DIR/.ghci
+ln -s ~/etc/nethackrc $STAGING_DIR/.nethackrc
 echo "source ~/etc/vim/vimrc" > $STAGING_DIR/.vimrc
 ls $STAGING_DIR
 cp -b $STAGING_DIR/.* ~/
