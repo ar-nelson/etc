@@ -227,15 +227,32 @@ function! TypescriptLocalSettings()
   nnoremap <buffer> <localleader>r :TsuRenameSymbol<CR>
 endfunction
 
+function! PrettierOnSave(parser)
+  if filereadable('.prettierrc')
+    mark p
+    execute '%!npx prettier --config .prettierrc --parser ' . a:parser
+    if v:shell_error
+      %print
+      undo
+    endif
+    normal! g'p
+  else
+    echo "No .prettierrc available!"
+  endif
+endfunction
+
 au BufRead,BufNewFile *.txt set filetype=txt
 au BufRead,BufNewFile *.md set filetype=markdown
 au BufRead,BufNewFile *.gradle set filetype=gradle
 au BufRead,BufNewFile *.sig set filetype=sml
 au BufRead,BufNewFile *?Script.sml source ~/etc/vim/hol4/hol.vim
-autocmd FileType java set tw=100
-autocmd FileType scala set tw=100
-autocmd FileType json setl formatprg=jq\ .\ -
-autocmd FileType typescript call TypescriptLocalSettings()
+au FileType java set tw=100
+au FileType scala set tw=100
+au FileType json setl formatprg=jq\ .\ -
+au FileType typescript call TypescriptLocalSettings()
+au BufWritePre *.js call PrettierOnSave('javascript')
+au BufWritePre *.ts call PrettierOnSave('typescript')
+au BufWritePre *.scss call PrettierOnSave('scss')
 
 let g:tex_flavor='latex'
 
