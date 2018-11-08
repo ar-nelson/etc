@@ -193,26 +193,13 @@ set wildignore+=*.a,*.hi,*/target/*,*/build/*,*/dist/*,*/node_modules/*,*.d.ts
 " }}} -----------------------------------------------------
 " Haskell {{{ -------------------------------------
 
-function! SetToCabalBuild()
-  if glob("*.cabal") != ''
-    setl makeprg=cabal\ build
-  endif
-endfunction
+let g:ale_linters = { 'haskell': ['hdevtools', 'hlint'] }
 
 autocmd FileType haskell,lhaskell setl keywordprg=hoogle\ --count=10
 "autocmd FileType haskell,lhaskell setl formatprg=xargs\ pointfree
-autocmd FileType haskell,lhaskell,cabal call SetToCabalBuild()
 
 command! -range Pf <line1>,<line2>!pointfree "$(cat)"
 command! -range Unpf <line1>,<line2>!pointful "$(cat)" | sed 's/^(\(.*\))$/\1/'
-
-function! FindCabalSandboxRoot()
-    return finddir('.cabal-sandbox', './;')
-endfunction
-
-function! FindCabalSandboxRootPackageConf()
-    return glob(FindCabalSandboxRoot().'/*-packages.conf.d')
-endfunction
 
 " }}} -----------------------------------------------------
 " Misc. Languages {{{ -------------------------------------
@@ -246,6 +233,7 @@ au BufRead,BufNewFile *.md set filetype=markdown
 au BufRead,BufNewFile *.gradle set filetype=gradle
 au BufRead,BufNewFile *.sig set filetype=sml
 au BufRead,BufNewFile *?Script.sml source ~/etc/vim/hol4/hol.vim
+au BufRead,BufNewFile *.h++ set filetype=cpp
 au FileType java set tw=100
 au FileType scala set tw=100
 au FileType json setl formatprg=jq\ .\ -
