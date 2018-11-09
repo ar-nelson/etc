@@ -12,7 +12,7 @@ Plug 'chip/vim-fat-finger'
 Plug 'sheerun/vim-polyglot'
 Plug 'rking/ag.vim', { 'on': 'Ag' }
 Plug 'kien/ctrlp.vim'
-Plug 'kien/rainbow_parentheses.vim'
+Plug 'junegunn/rainbow_parentheses.vim'
 Plug 'scrooloose/nerdtree', { 'on': 'NERDTreeToggle' }
 Plug 'w0rp/ale'
 Plug 'ar-nelson/haskell-vim'

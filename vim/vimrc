@@ -155,6 +155,9 @@ endif
 " Polyglot
 let g:polyglot_disabled = ['haskell', 'typescript']
 
+" Rainbow Parentheses
+let g:rainbow#blacklist = [188] " don't use plain white
+
 " Airline
 let g:airline_powerline_fonts = 1
 let g:airline_theme = 'jellybeans'
@@ -234,10 +237,10 @@ au BufRead,BufNewFile *.gradle set filetype=gradle
 au BufRead,BufNewFile *.sig set filetype=sml
 au BufRead,BufNewFile *?Script.sml source ~/etc/vim/hol4/hol.vim
 au BufRead,BufNewFile *.h++ set filetype=cpp
-au FileType java set tw=100
-au FileType scala set tw=100
+au FileType java,scala set tw=100
 au FileType json setl formatprg=jq\ .\ -
 au FileType typescript call TypescriptLocalSettings()
+au FileType lisp,scheme,clojure RainbowParentheses
 au BufWritePre *.js call PrettierOnSave('javascript')
 au BufWritePre *.ts call PrettierOnSave('typescript')
 au BufWritePre *.scss call PrettierOnSave('scss')
@@ -255,7 +258,7 @@ let g:ctrlp_map = '<Leader>p'
 nnoremap <Leader><Leader> :CtrlPBuffer<CR>
 nnoremap <Leader>t :CtrlPTags<CR>
 nnoremap <Leader>n :NERDTree<CR>
-nnoremap <Leader>r :RainbowParenthesesToggleAll<CR>
+nnoremap <Leader>r :RainbowParentheses!!<CR>
 nnoremap <Leader>/ :CtrlPLine<CR>
 nnoremap <Leader>a :Ag
 nnoremap <Leader>w <C-w>v<C-w>l
