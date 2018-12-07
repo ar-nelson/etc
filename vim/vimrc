@@ -7,6 +7,9 @@
 " VIMRC can contain any local modifications to the file.
 " ---------------------------------------------------------
 
+" Before loading plugins, we need to enable ALE completion
+let g:ale_completion_enabled = 1
+
 source ~/etc/vim/plugins.vim
 
 " Basic Options {{{ ---------------------------------------
@@ -157,6 +160,7 @@ let g:polyglot_disabled = ['haskell', 'typescript']
 
 " Rainbow Parentheses
 let g:rainbow#blacklist = [188] " don't use plain white
+let g:rainbow#pairs = [['(', ')'], ['[', ']'], ['{', '}']]
 
 " Airline
 let g:airline_powerline_fonts = 1
@@ -208,13 +212,11 @@ command! -range Unpf <line1>,<line2>!pointful "$(cat)" | sed 's/^(\(.*\))$/\1/'
 " Misc. Languages {{{ -------------------------------------
 
 function! TypescriptLocalSettings()
-  set ballooneval
-  setlocal balloonexpr=tsuquyomi#balloonexpr()
   let g:vcm_omni_pattern='.'
-  nnoremap <buffer> K :echo tsuquyomi#hint()<CR>
-  nnoremap <buffer> <localleader>q :TsuQuickFix<CR>
-  nnoremap <buffer> <localleader>d :TsuDefinition<CR>
-  nnoremap <buffer> <localleader>r :TsuRenameSymbol<CR>
+  nnoremap <buffer> K :ALEHover<CR>
+  nnoremap <buffer> <localleader>q :ALEFix<CR>
+  nnoremap <buffer> <localleader>d :ALEGoToDefinition<CR>
+  nnoremap <buffer> <localleader>r :ALEFindReferences<CR>
 endfunction
 
 function! PrettierOnSave(parser)
@@ -241,8 +243,8 @@ au FileType java,scala set tw=100
 au FileType json setl formatprg=jq\ .\ -
 au FileType typescript call TypescriptLocalSettings()
 au FileType lisp,scheme,clojure RainbowParentheses
-au BufWritePre *.js call PrettierOnSave('javascript')
-au BufWritePre *.ts call PrettierOnSave('typescript')
+au BufWritePre *.js call PrettierOnSave('babylon')
+au BufWritePre *.ts,*.tsx call PrettierOnSave('typescript')
 au BufWritePre *.scss call PrettierOnSave('scss')
 
 let g:tex_flavor='latex'
@@ -364,6 +366,9 @@ command Qa :qa
 command W :w
 command Wq :wq
 command Wa :wa
+
+" deoplete tab-complete
+inoremap <expr><tab> pumvisible() ? "\<c-n>" : "\<tab>"
 
 " }}} -----------------------------------------------------
 
