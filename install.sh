@@ -17,5 +17,7 @@ rm -rf $STAGING_DIR
 mkfifo ~/etc/vim/hol4/fifo
 mkdir -p ~/.vim/autoload
 cp ~/etc/vim/vim-plug.vim ~/.vim/autoload/plug.vim
+mkdir -p ~/.config/nvim
+ln -s ~/etc/vim/nvim-init.vim ~/.config/nvim/init.vim
 echo "Installation complete."
 

@@ -4,6 +4,8 @@
 ##   Adam Nelson's bashrc   ##
 ##############################
 
+PATH="~/bin:$PATH"
+
 # If not running interactively, don't do anything
 case $- in
     *i*) ;;
@@ -16,7 +18,13 @@ esac
 shopt -s extglob
 shopt -s dotglob
 shopt -s cdspell
-export EDITOR=vim
+if which nvim > /dev/null; then
+  export EDITOR=nvim
+elif which vim > /dev/null; then
+  export EDITOR=vim
+else
+  export EDITOR=vi
+fi
 export VIMHOL_FIFO="$HOME/etc/vim/hol4/fifo"
 
 export HISTFILESIZE=20000
@@ -26,8 +34,6 @@ shopt -s cmdhist
 shopt -s checkwinsize
 HISTCONTROL=ignoreboth
 export HISTIGNORE="&:ls:[bf]g:exit"
-
-PATH="~/bin:$PATH"
 
 # Aliases
 # ------------------------------------------------------------
@@ -45,6 +51,13 @@ alias mv='mv -i'
 
 alias xcopy='xclip -i -selection clipboard'
 alias xpaste='xclip -o -selection clipboard'
+
+if which nvim > /dev/null; then
+  alias vim='nvim'
+fi
+if which rg > /dev/null; then
+  alias ag='rg'
+fi
 
 # Prompt
 # ------------------------------------------------------------
