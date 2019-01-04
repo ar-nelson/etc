@@ -28,6 +28,18 @@ fi
 lnb ~/etc/vim/vim-plug.vim ~/.vim/autoload/plug.vim
 lnb ~/etc/vim/nvim-init.vim ~/.config/nvim/init.vim
 
+# Install Vim plugins
+if which nvim > /dev/null; then
+  nvim +'PlugInstall --sync' +qa
+else
+  vim +'PlugInstall --sync' +qa
+fi
+if which npm > /dev/null; then
+  pushd ~/.vim/bundle/tern_for_vim
+  npm install
+  popd
+fi
+
 # Set Git identity
 if [ -z "$(git config --get user.email)" ]; then
   echo "Setting Git identity..."
