@@ -58,6 +58,10 @@ fi
 if which rg > /dev/null; then
   alias ag='rg'
 fi
+if which most > /dev/null; then
+  alias less=most
+  export PAGER=most
+fi
 
 # Prompt
 # ------------------------------------------------------------
