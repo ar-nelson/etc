@@ -65,15 +65,14 @@ fi
 source ~/etc/scripts/git-prompt.sh
 
 Color_Reset='\[\033[0m\]'
-Color_Hostname='\[\033[36m\]'
-Color_Colon='\[\033[90m\]'
-Color_Directory='\[\033[96m\]'
+Color_Hostname='\[\033[90m\]'
+Color_Directory='\[\033[90m\]'
 Color_Success='\[\033[93m\]'
 Color_Failure='\[\033[91m\]'
 Color_Git='\[\033[32m\]'
 Color_Jobs='\[\033[91m\]'
 
-if [ "$TERM" == "linux" ]; then
+if [[ "$TERM" == "linux" ]]; then
   # Use ASCII symbols
   Symbol_Ellipsis="..."
   Symbol_Prompt="$"
@@ -85,25 +84,28 @@ else
   Symbol_Jobs="⚐"
 fi
 
+# If the PWD matches this regex, it will be cut down to only the match
+Directory_Clip_Regex='~?/(.{0,15}|[^/]*)$'
+
 set_prompt() {
   local Last_Command=$?
-  local Current_Directory=$(pwd)
 
   # Window title
   PS1='\[\033]0;\u@\h:${PWD//[^[:ascii:]]/?}\007\]'
   
   # Hostname
-  PS1+="$Color_Hostname$(hostname)"
-  PS1+="$Color_Colon:"
+  PS1+="$Color_Hostname$(hostname) "
 
   # Working directory
   PS1+="$Color_Directory"
-  case "$Current_Directory" in
-    $HOME) PS1+='~';;
-    '/') PS1+='/';;
-    /[!-.0-~]) PS1+="$Current_Directory";;
-    *) PS1+="$Symbol_Ellipsis/$(basename "$Current_Directory")";;
-  esac
+  if [[ "$(dirs +0)" =~ $Directory_Clip_Regex ]]; then
+    if [[ "$(dirs +0)" != "$BASH_REMATCH" ]]; then
+      PS1+="$Symbol_Ellipsis"
+    fi
+    PS1+="$BASH_REMATCH"
+  else
+    PS1+="$(dirs +0)"
+  fi
   PS1+="$Color_Reset"
   
   # Git branch
@@ -112,7 +114,7 @@ set_prompt() {
   fi
 
   # Background jobs
-  if [ -n "$(jobs -p)" ]; then
+  if [[ -n "$(jobs -p)" ]]; then
     PS1+=" $Color_Jobs$Symbol_Jobs\\j$Color_Reset"
   fi
 
