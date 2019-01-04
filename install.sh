@@ -3,21 +3,37 @@
 # This script installs symbolic links and stub files that initialize a Linux
 # system to use these dotfiles.
 
-STAGING_DIR=`mktemp -d 2>/dev/null || mktemp -d -t 'mytmpdir'`
+lnb() {
+  if [ -f "$2" ]; then
+    mv -f "$2" "$2~"
+  fi
+  mkdir -p "$(dirname "$2")"
+  ln -s "$1" "$2"
+}
 
 echo "Installing dotfiles..."
-ln -s ~/etc/bashrc $STAGING_DIR/.bashrc
-ln -s ~/etc/tmux.conf $STAGING_DIR/.tmux.conf
-ln -s ~/etc/ghci.conf $STAGING_DIR/.ghci
-ln -s ~/etc/nethackrc $STAGING_DIR/.nethackrc
-echo "source ~/etc/vim/vimrc" > $STAGING_DIR/.vimrc
-ls $STAGING_DIR
-cp -b $STAGING_DIR/.* ~/
-rm -rf $STAGING_DIR
-mkfifo ~/etc/vim/hol4/fifo
-mkdir -p ~/.vim/autoload
-cp ~/etc/vim/vim-plug.vim ~/.vim/autoload/plug.vim
-mkdir -p ~/.config/nvim
-ln -s ~/etc/vim/nvim-init.vim ~/.config/nvim/init.vim
+
+lnb ~/etc/bashrc ~/.bashrc
+lnb ~/etc/tmux.conf ~/.tmux.conf
+lnb ~/etc/ghci.conf ~/.ghci
+lnb ~/etc/nethackrc ~/.nethackrc
+lnb ~/etc/vim/vimrc ~/.vimrc
+
+# Pipe for Vim HOL4
+if [ ! -p ~/etc/vim/hol4/fifo ]; then
+  mkfifo ~/etc/vim/hol4/fifo
+fi
+
+# Set up Vim and Neovim folder structure
+lnb ~/etc/vim/vim-plug.vim ~/.vim/autoload/plug.vim
+lnb ~/etc/vim/nvim-init.vim ~/.config/nvim/init.vim
+
+# Set Git identity
+if [ -z "$(git config --get user.email)" ]; then
+  echo "Setting Git identity..."
+  git config --global user.name "Adam R. Nelson"
+  git config --global user.email "adam@nels.onl"
+fi
+
 echo "Installation complete."
 
