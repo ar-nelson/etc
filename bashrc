@@ -65,19 +65,23 @@ fi
 source ~/etc/scripts/git-prompt.sh
 
 Color_Reset='\[\033[0m\]'
-Color_Directory='\[\033[90m\]'
+Color_Hostname='\[\033[36m\]'
+Color_Colon='\[\033[90m\]'
+Color_Directory='\[\033[96m\]'
 Color_Success='\[\033[93m\]'
-Color_Failure='\[\033[33m\]'
+Color_Failure='\[\033[91m\]'
 Color_Git='\[\033[32m\]'
 Color_Jobs='\[\033[91m\]'
 
 if [ "$TERM" == "linux" ]; then
   # Use ASCII symbols
   Symbol_Ellipsis="..."
+  Symbol_Prompt="$"
   Symbol_Jobs="*"
 else
   # Use Unicode symbols
   Symbol_Ellipsis="…"
+  Symbol_Prompt="•"
   Symbol_Jobs="⚐"
 fi
 
@@ -88,6 +92,10 @@ set_prompt() {
   # Window title
   PS1='\[\033]0;\u@\h:${PWD//[^[:ascii:]]/?}\007\]'
   
+  # Hostname
+  PS1+="$Color_Hostname$(hostname)"
+  PS1+="$Color_Colon:"
+
   # Working directory
   PS1+="$Color_Directory"
   case "$Current_Directory" in
@@ -108,13 +116,13 @@ set_prompt() {
     PS1+=" $Color_Jobs$Symbol_Jobs\\j$Color_Reset"
   fi
 
-  # Colorized dash based on last command's exit code
+  # Colorized dot based on last command's exit code
   if [[ $Last_Command == 0 ]]; then
-    PS1+=" $Color_Success->"
+    PS1+=" $Color_Success"
   else
-    PS1+=" $Color_Failure~>"
+    PS1+=" $Color_Failure"
   fi
-  PS1+="$Color_Reset "
+  PS1+="$Symbol_Prompt$Color_Reset "
 }
 
 PROMPT_COMMAND='set_prompt'
