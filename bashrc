@@ -98,7 +98,7 @@ set_prompt() {
   PS1='\[\033]0;\u@\h:${PWD//[^[:ascii:]]/?}\007\]'
   
   # Hostname
-  PS1+="$Color_Hostname$(hostname) "
+  PS1+="$Color_Hostname\\h "
 
   # Working directory
   PS1+="$Color_Directory"

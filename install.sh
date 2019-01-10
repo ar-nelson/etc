@@ -13,7 +13,17 @@ lnb() {
 
 echo "Installing dotfiles..."
 
-lnb ~/etc/bashrc ~/.bashrc
+# .bashrc needs to be a file, not a link, because Debian's .profile uses -f to
+# check for its existence
+if [[ -f ~/.bashrc  ]]; then
+  if [[ "$(head -1 ~/.bashrc)" != "source ~/etc/bashrc" ]]; then
+    mv ~/.bashrc ~/.bashrc~
+    echo "source ~/etc/bashrc" > ~/.bashrc
+  fi
+else
+  echo "source ~/etc/bashrc" > ~/.bashrc
+fi
+
 lnb ~/etc/tmux.conf ~/.tmux.conf
 lnb ~/etc/ghci.conf ~/.ghci
 lnb ~/etc/nethackrc ~/.nethackrc
