@@ -4,8 +4,6 @@
 ##   Adam Nelson's bashrc   ##
 ##############################
 
-PATH="~/bin:$PATH"
-
 # If not running interactively, don't do anything
 case $- in
     *i*) ;;
@@ -91,25 +89,30 @@ fi
 # If the PWD matches this regex, it will be cut down to only the match
 Directory_Clip_Regex='~?/(.{0,15}|[^/]*)$'
 
-set_prompt() {
-  local Last_Command=$?
+Bashrc_Directory() {
+  if [[ "$(dirs +0)" =~ $Directory_Clip_Regex ]]; then
+    if [[ "$(dirs +0)" != "$BASH_REMATCH" ]]; then
+      echo -n "$Symbol_Ellipsis"
+    fi
+    echo -n "$BASH_REMATCH"
+  else
+    dirs +0
+  fi
+}
 
-  # Window title
-  PS1='\[\033]0;\u@\h:${PWD//[^[:ascii:]]/?}\007\]'
-  
+Bashrc_Prompt() {
+  local Last_Command=$?
+  local Directory="$(Bashrc_Directory)"
+
+  # Window Title
+  PS1="\[\e]0;$Directory\a\]"
+
   # Hostname
   PS1+="$Color_Hostname\\h "
 
   # Working directory
   PS1+="$Color_Directory"
-  if [[ "$(dirs +0)" =~ $Directory_Clip_Regex ]]; then
-    if [[ "$(dirs +0)" != "$BASH_REMATCH" ]]; then
-      PS1+="$Symbol_Ellipsis"
-    fi
-    PS1+="$BASH_REMATCH"
-  else
-    PS1+="$(dirs +0)"
-  fi
+  PS1+="$Directory"
   PS1+="$Color_Reset"
   
   # Git branch
@@ -131,6 +134,34 @@ set_prompt() {
   PS1+="$Symbol_Prompt$Color_Reset "
 }
 
-PROMPT_COMMAND='set_prompt'
+PROMPT_COMMAND='Bashrc_Prompt'
 PS2="$Color_Success$Symbol_Ellipsis$Color_Reset "
 
+# Window Title
+# ------------------------------------------------------------
+
+Bashrc_Window_Title() {
+  case "$1" in
+    # The first two cases prevent recursion
+    *\033]O*|*\\e]0*)
+      true;;
+    Bashrc_*)
+      true;;
+    *)
+      printf "\e]0;%s $ %s\a" "$(Bashrc_Directory)" "$1";;
+  esac
+}
+
+# Open a file descriptor to /dev/tty, to write window titles
+# without printing them into command groups.
+#
+# The trailing "||:" prevents this from being an error if it fails.
+#
+# https://stackoverflow.com/a/48407412
+#
+exec {tty_fd}>/dev/tty ||:
+
+# Use a DEBUG trap to rewrite the window title on each command.
+# This provides a command name in the title bar, for KeePass to autofill on.
+#
+trap '[[ $tty_fd ]] && Bashrc_Window_Title "${BASH_COMMAND}" >&$tty_fd ||:' DEBUG
