@@ -7,9 +7,6 @@
 " VIMRC can contain any local modifications to the file.
 " ---------------------------------------------------------
 
-" Before loading plugins, we need to enable ALE completion
-let g:ale_completion_enabled = 1
-
 source ~/etc/vim/plugins.vim
 
 " Basic Options {{{ ---------------------------------------
@@ -35,7 +32,7 @@ set shortmess+=I
 set expandtab
 set shiftwidth=2
 set softtabstop=2
-set tabstop=8
+set tabstop=4
 filetype plugin indent on
 
 " Scroll before the cursor reaches the edge of the window.
@@ -155,8 +152,16 @@ endif
 " }}} -----------------------------------------------------
 " Plugin Options {{{ -----------------------------------
 
+" Ack
+if executable('rg')
+  let g:ackprg = 'rg --vimgrep'
+elseif executable('ag')
+  let g:ackprg = 'ag --vimgrep'
+endif
+command! -nargs=+ Ag :Ack <args>
+
 " Polyglot
-let g:polyglot_disabled = ['haskell', 'typescript']
+let g:polyglot_disabled = ['haskell', 'typescript', 'javascript']
 
 " Rainbow Parentheses
 let g:rainbow#blacklist = [188] " don't use plain white
@@ -171,45 +176,38 @@ let g:airline_detect_spelllang = 0
 let g:airline_highlighting_cache = 1
 let g:airline_section_y = ''
 
-" ALE
+" LanguageClient/ALE
+let g:LanguageClient_diagnosticsList = 'location'
 let g:ale_sign_error = '✘→'
 let g:ale_sign_warning = '!→'
 
-" VimCompletesMe
-set completeopt-=preview
-autocmd FileType javascript,typescript let b:vcm_tab_complete = 'omni'
+" Deoplete
+let g:deoplete#enable_at_startup = 1
 
-" Ctrl-P
-let g:ctrlp_use_caching = 0
-if executable('ag')
-  set grepprg=ag\ --nogroup\ --nocolor
-  let g:ctrlp_user_command = 'ag %s -l --nocolor -g "" --ignore *.png --ignore *.jpg --ignore *.zip'
-else
-  let g:ctrlp_user_command = ['.git',
-    \ 'cd %s && git ls-files . -co --exclude-standard',
-    \ 'find %s -type f']
-endif
+" Echodoc
+set noshowmode
+let g:echodoc_enable_at_startup = 1
+let g:echodoc#type = 'signature'
 
 let g:ctrlp_match_window_reversed = 0
 set wildignore+=*.pyc,*.png,*.jpg,*.gif,*.PNG,*.JPG,*.GIF,*.pdf,*.o,*.obj,.hg
 set wildignore+=*/Archive/*,*.jar,*.class,*.doc,*.rtf,*.ppt,*.zip,*.gz,*.bz2
 set wildignore+=*.lzma,*.7z,*.exe,*.dll,*.so.*,*~,*.wav,*.mp3,*.flac,*.ogg
 set wildignore+=*.ttf,*.mpg,*.avi,*.MPG,*.AVI,*.mp4,*.divx,*.wma,*.wmv
-set wildignore+=*.a,*.hi,*/target/*,*/build/*,*/dist/*,*/node_modules/*,*.d.ts
+set wildignore+=*.a,*.hi,*/target/*,*/build/*,*/dist/*,*/node_modules/*
 
 " }}} -----------------------------------------------------
-" Haskell {{{ -------------------------------------
+" Language Support {{{ -------------------------------------
 
-let g:ale_linters = { 'haskell': ['hdevtools', 'hlint'] }
+let g:ale_linters = { 'haskell': [], 'javascript': ['eslint'], 'css': [], 'sass': [], 'scss': [] }
+let g:haskell_enable_quantification = 1
+let g:haskell_enable_recursivedo = 1
 
 autocmd FileType haskell,lhaskell setl keywordprg=hoogle\ --count=10
 "autocmd FileType haskell,lhaskell setl formatprg=xargs\ pointfree
 
 command! -range Pf <line1>,<line2>!pointfree "$(cat)"
 command! -range Unpf <line1>,<line2>!pointful "$(cat)" | sed 's/^(\(.*\))$/\1/'
-
-" }}} -----------------------------------------------------
-" Misc. Languages {{{ -------------------------------------
 
 function! TypescriptLocalSettings()
   let g:vcm_omni_pattern='.'
@@ -233,6 +231,16 @@ function! PrettierOnSave(parser)
   endif
 endfunction
 
+function! LanguageClientKeyBindings()
+  nnoremap <buffer> Q :call LanguageClient#explainErrorAtPoint()<CR>
+  nnoremap <buffer> <localleader>k :call LanguageClient#textDocument_hover()<CR>
+  nnoremap <buffer> <localleader>d :call LanguageClient#textDocument_definition()<CR>
+  nnoremap <buffer> <localleader>r :call LanguageClient#textDocument_rename()<CR>
+  nnoremap <buffer> <localleader>b :call LanguageClient#textDocument_references()<CR>
+  nnoremap <buffer> <localleader>a :call LanguageClient#textDocument_codeAction()<CR>
+  nnoremap <buffer> <localleader>s :call LanguageClient#textDocument_documentSymbol()<CR>
+endfunction
+
 au BufRead,BufNewFile *.txt set filetype=txt
 au BufRead,BufNewFile *.md set filetype=markdown
 au BufRead,BufNewFile *.gradle set filetype=gradle
@@ -243,11 +251,37 @@ au FileType java,scala set tw=100
 au FileType json setl formatprg=jq\ .\ -
 au FileType typescript call TypescriptLocalSettings()
 au FileType lisp,scheme,clojure RainbowParentheses
-au BufWritePre *.js call PrettierOnSave('babylon')
+au FileType html,css,sass,scss setlocal iskeyword+=- 
+au BufWritePre *.js,*.jsx,*.mjs call PrettierOnSave('babel')
 au BufWritePre *.ts,*.tsx call PrettierOnSave('typescript')
 au BufWritePre *.scss call PrettierOnSave('scss')
 
 let g:tex_flavor='latex'
+
+hi link ALEError Error
+hi Warning term=underline cterm=underline ctermfg=Yellow gui=undercurl guisp=Gold
+hi link ALEWarning Warning
+hi link ALEInfo SpellCap
+
+let g:LanguageClient_serverCommands = {
+  \ 'haskell'   : ['~/.local/bin/hie'],
+  \ 'lhaskell'   : ['~/.local/bin/hie'],
+  \ 'javascript': ['javascript-typescript-stdio'],
+  \ 'javascript.jsx': ['javascript-typescript-stdio'],
+  \ 'sass': ['css-languageserver', '--stdio'],
+  \ 'scss': ['css-languageserver', '--stdio']
+  \ }
+let g:LanguageClient_rootMarkers = {
+  \ 'haskell': ['*.cabal', 'stack.yaml'],
+  \ 'lhaskell': ['*.cabal', 'stack.yaml'],
+  \ 'javascript': ['package.json'],
+  \ 'javascript.jsx': ['package.json'],
+  \ 'typescript': ['package.json'],
+  \ 'sass': ['package.json'],
+  \ 'scss': ['package.json']
+  \ }
+
+au FileType javascript,css,sass,scss,haskell,lhaskell call LanguageClientKeyBindings()
 
 " }}} -----------------------------------------------------
 " Key Mappings {{{ ----------------------------------------
@@ -256,22 +290,19 @@ let mapleader = '\'
 let maplocalleader = ' '
 
 " Shortcuts for plugin commands.
-let g:ctrlp_map = '<Leader>p'
-nnoremap <Leader><Leader> :CtrlPBuffer<CR>
-nnoremap <Leader>t :CtrlPTags<CR>
+nnoremap <Leader>p :FZF<CR>
+nnoremap <Leader><Leader> :Buffers<CR>
+nnoremap <Leader>t :Tags<CR>
 nnoremap <Leader>n :NERDTree<CR>
 nnoremap <Leader>r :RainbowParentheses!!<CR>
-nnoremap <Leader>/ :CtrlPLine<CR>
-nnoremap <Leader>a :Ag
+nnoremap <Leader>/ :Lines<CR>
+nnoremap <Leader>a :Ack <C-r><C-w><CR>
 nnoremap <Leader>w <C-w>v<C-w>l
 nnoremap <Leader>d :ALEGoToDefinition<CR>
 nnoremap <Leader>q :ALEFix<CR>
 nnoremap <Leader>] :ALENextWrap<CR>
 nnoremap <Leader>[ :ALEPreviousWrap<CR>
 set pastetoggle=<Leader>v
-au FileType haskell,lhaskell nnoremap <buffer> <leader>ht :HdevtoolsType<CR>
-au FileType haskell,lhaskell nnoremap <buffer> <leader>hi :HdevtoolsInfo<CR>
-au FileType haskell,lhaskell nnoremap <buffer> <silent> <leader>hc :HdevtoolsClear<CR>
 
 " Open VIMRC with one command.
 nnoremap <Leader>rc  :e ~/etc/vim/vimrc<CR>
