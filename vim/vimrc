@@ -160,6 +160,12 @@ elseif executable('ag')
 endif
 command! -nargs=+ Ag :Ack <args>
 
+" Netrw (emulate NerdTree with builtin file browser)
+let g:netrw_banner = 0
+let g:netrw_liststyle = 3
+let g:netrw_altv = 1
+let g:netrw_winsize = 18
+
 " Polyglot
 let g:polyglot_disabled = ['haskell', 'typescript', 'javascript']
 
@@ -247,6 +253,7 @@ au BufRead,BufNewFile *.gradle set filetype=gradle
 au BufRead,BufNewFile *.sig set filetype=sml
 au BufRead,BufNewFile *?Script.sml source ~/etc/vim/hol4/hol.vim
 au BufRead,BufNewFile *.h++ set filetype=cpp
+au BufRead,BufNewFile *.sld set filetype=scheme
 au FileType java,scala set tw=100
 au FileType json setl formatprg=jq\ .\ -
 au FileType typescript call TypescriptLocalSettings()
@@ -255,6 +262,8 @@ au FileType html,css,sass,scss setlocal iskeyword+=-
 au BufWritePre *.js,*.jsx,*.mjs call PrettierOnSave('babel')
 au BufWritePre *.ts,*.tsx call PrettierOnSave('typescript')
 au BufWritePre *.scss call PrettierOnSave('scss')
+
+au FileType css,scss,lisp,scheme,clojure :syntax sync fromstart
 
 let g:tex_flavor='latex'
 
@@ -293,7 +302,7 @@ let maplocalleader = ' '
 nnoremap <Leader>p :FZF<CR>
 nnoremap <Leader><Leader> :Buffers<CR>
 nnoremap <Leader>t :Tags<CR>
-nnoremap <Leader>n :NERDTree<CR>
+nnoremap <Leader>n :Lexplore<CR>
 nnoremap <Leader>r :RainbowParentheses!!<CR>
 nnoremap <Leader>/ :Lines<CR>
 nnoremap <Leader>a :Ack <C-r><C-w><CR>
