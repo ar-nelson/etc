@@ -65,6 +65,8 @@ if which most > /dev/null; then
   export PAGER=most
 fi
 
+alias lg='lazygit'
+
 # Prompt
 # ------------------------------------------------------------
 
