@@ -33,7 +33,7 @@ shopt -s checkwinsize
 HISTCONTROL=ignoreboth
 export HISTIGNORE="&:ls:[bf]g:exit"
 
-source /usr/share/doc/fzf/examples/key-bindings.bash
+source ~/.fzf.bash
 export FZF_TMUX=1
 export FZF_DEFAULT_COMMAND="rg --files --hidden -g '!.git/'"
 

@@ -13,8 +13,7 @@ Plug 'tpope/vim-sleuth'
 Plug 'chip/vim-fat-finger'
 Plug 'sheerun/vim-polyglot'
 Plug 'mileszs/ack.vim', { 'on': 'Ack' }
-Plug 'kien/ctrlp.vim'
-Plug '/usr/share/doc/fzf/examples'
+Plug 'junegunn/fzf'
 Plug 'junegunn/fzf.vim'
 Plug 'Shougo/echodoc.vim'
 Plug 'junegunn/rainbow_parentheses.vim'
@@ -27,10 +26,8 @@ Plug 'autozimu/LanguageClient-neovim', {
     \ 'branch': 'next',
     \ 'do': 'bash install.sh',
     \ }
-"Plug 'ajh17/VimCompletesMe'
 Plug 'cypok/vim-sml'
 Plug 'ar-nelson/vim-syntax-hol4'
-"Plug 'HerringtonDarkholme/yats.vim'
 Plug 'leafgarland/typescript-vim'
 Plug 'pangloss/vim-javascript'
 Plug 'mxw/vim-jsx'

@@ -7,6 +7,9 @@
 " VIMRC can contain any local modifications to the file.
 " ---------------------------------------------------------
 
+" Polyglot (must come before plugins load)
+let g:polyglot_disabled = ['haskell', 'typescript', 'javascript']
+
 source ~/etc/vim/plugins.vim
 
 " Basic Options {{{ ---------------------------------------
@@ -164,9 +167,6 @@ let g:netrw_liststyle = 3
 let g:netrw_altv = 1
 let g:netrw_winsize = 18
 
-" Polyglot
-let g:polyglot_disabled = ['haskell', 'typescript', 'javascript']
-
 " Rainbow Parentheses
 let g:rainbow#blacklist = [188] " don't use plain white
 let g:rainbow#pairs = [['(', ')'], ['[', ']'], ['{', '}']]
@@ -272,14 +272,16 @@ hi link ALEWarning Warning
 hi link ALEInfo SpellCap
 
 let g:LanguageClient_serverCommands = {
+  \ 'rust': ['~/.cargo/bin/rustup', 'run', 'stable', 'rls'],
   \ 'haskell'   : ['~/.local/bin/hie'],
   \ 'lhaskell'   : ['~/.local/bin/hie'],
   \ 'javascript': ['javascript-typescript-stdio'],
   \ 'javascript.jsx': ['javascript-typescript-stdio'],
   \ 'sass': ['css-languageserver', '--stdio'],
-  \ 'scss': ['css-languageserver', '--stdio']
+  \ 'scss': ['css-languageserver', '--stdio'],
   \ }
 let g:LanguageClient_rootMarkers = {
+  \ 'rust': ['Cargo.toml'],
   \ 'haskell': ['*.cabal', 'stack.yaml'],
   \ 'lhaskell': ['*.cabal', 'stack.yaml'],
   \ 'javascript': ['package.json'],
@@ -289,7 +291,7 @@ let g:LanguageClient_rootMarkers = {
   \ 'scss': ['package.json']
   \ }
 
-au FileType javascript,css,sass,scss,haskell,lhaskell call LanguageClientKeyBindings()
+au FileType javascript,css,sass,scss,haskell,lhaskell,rust call LanguageClientKeyBindings()
 
 " }}} -----------------------------------------------------
 " Key Mappings {{{ ----------------------------------------
