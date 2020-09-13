@@ -98,9 +98,7 @@ function! SetNoWrap()
   unmap <buffer> <Up>
   unmap <buffer> <Down>
 endfunction
-autocmd FileType txt call SetWrap()
-autocmd FileType markdown call SetWrap()
-autocmd FileType tex call SetWrap()
+autocmd FileType txt,markdown,tex call SetWrap()
 "set showbreak=…
 
 " }}} -----------------------------------------------------
@@ -258,7 +256,8 @@ au FileType java,scala set tw=100
 au FileType json setl formatprg=jq\ .\ -
 au FileType typescript call TypescriptLocalSettings()
 au FileType lisp,scheme,clojure RainbowParentheses
-au FileType html,css,sass,scss setlocal iskeyword+=- 
+au FileType html,css,sass,scss setlocal iskeyword+=-
+au FileType txt,markdown call deoplete#custom#buffer_option('auto_complete', v:false)
 au BufWritePre *.js,*.jsx,*.mjs call PrettierOnSave('babel')
 au BufWritePre *.ts,*.tsx call PrettierOnSave('typescript')
 au BufWritePre *.scss call PrettierOnSave('scss')
