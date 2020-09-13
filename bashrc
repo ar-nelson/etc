@@ -35,7 +35,7 @@ export HISTIGNORE="&:ls:[bf]g:exit"
 
 source /usr/share/doc/fzf/examples/key-bindings.bash
 export FZF_TMUX=1
-export FZF_DEFAULT_COMMAND='rg --files --hidden'
+export FZF_DEFAULT_COMMAND="rg --files --hidden -g '!.git/'"
 
 # Aliases
 # ------------------------------------------------------------
