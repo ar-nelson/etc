@@ -182,11 +182,17 @@ let g:airline_section_y = ''
 
 " LanguageClient/ALE
 let g:LanguageClient_diagnosticsList = 'location'
+let g:ale_completion_enabled = 0
 let g:ale_sign_error = '✘→'
 let g:ale_sign_warning = '!→'
 
 " Deoplete
 let g:deoplete#enable_at_startup = 1
+call deoplete#custom#source('ale', 'rank', 999)
+call deoplete#custom#option({
+\   'auto_refresh_delay': 0,
+\   'num_processes': 0,
+\ })
 
 " Echodoc
 set noshowmode
@@ -254,7 +260,7 @@ au BufRead,BufNewFile *.h++ set filetype=cpp
 au BufRead,BufNewFile *.sld set filetype=scheme
 au FileType java,scala set tw=100
 au FileType json setl formatprg=jq\ .\ -
-au FileType typescript call TypescriptLocalSettings()
+au FileType javascript,javascript.jsx,typescript call TypescriptLocalSettings()
 au FileType lisp,scheme,clojure RainbowParentheses
 au FileType html,css,sass,scss setlocal iskeyword+=-
 au FileType txt,markdown call deoplete#custom#buffer_option('auto_complete', v:false)
@@ -275,8 +281,6 @@ let g:LanguageClient_serverCommands = {
   \ 'rust': ['~/.cargo/bin/rustup', 'run', 'stable', 'rls'],
   \ 'haskell'   : ['~/.local/bin/hie'],
   \ 'lhaskell'   : ['~/.local/bin/hie'],
-  \ 'javascript': ['javascript-typescript-stdio'],
-  \ 'javascript.jsx': ['javascript-typescript-stdio'],
   \ 'sass': ['css-languageserver', '--stdio'],
   \ 'scss': ['css-languageserver', '--stdio'],
   \ }
@@ -284,9 +288,6 @@ let g:LanguageClient_rootMarkers = {
   \ 'rust': ['Cargo.toml'],
   \ 'haskell': ['*.cabal', 'stack.yaml'],
   \ 'lhaskell': ['*.cabal', 'stack.yaml'],
-  \ 'javascript': ['package.json'],
-  \ 'javascript.jsx': ['package.json'],
-  \ 'typescript': ['package.json'],
   \ 'sass': ['package.json'],
   \ 'scss': ['package.json']
   \ }
