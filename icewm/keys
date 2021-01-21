@@ -1,0 +1,26 @@
+key "Super+Enter" x-terminal-emulator
+
+# Windows-style window tiling shortcuts
+key "Super+Left" tile-window.sh left
+key "Super+Right" tile-window.sh right
+key "Super+Up" tile-window.sh up
+key "Super+Down" tile-window.sh down
+
+# "Multimedia key" bindings for Xorg. Gather the keycodes of your
+# advanced function keys by watching the output of the xev command whilest
+# pressing those keys and map those symbols by using xmodmap.
+
+# Note: some of them might have unwanted side effects through concurrency with
+# other listeners like systemd for the suspend key events
+#
+# key "XF86Standby"	/bin/sh -c "{ test -e /run/systemd/system && systemctl suspend; } ||:"
+# key "XF86Sleep" /bin/sh -c "{ test -e /run/systemd/system && systemctl suspend; } ||:"
+key "XF86AudioLowerVolume" amixer sset Master 5%-
+key "XF86AudioRaiseVolume" amixer sset Master 5%+
+key "XF86AudioMute"	amixer sset Master toggle
+# key "XF86HomePage" sensible-browser about:blank
+# key "XF86Search" sensible-browser http://www.duckduckgo.com
+# key "XF86Eject"	eject
+# key "XF86Calculator" /bin/sh -c "gnome-calculator || xcalc || ( type bc >/dev/null 2>&1 && xterm -e bc -l)"
+
+switchkey "Super+p"	icewm-menu-xrandr
