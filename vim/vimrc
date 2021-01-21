@@ -8,7 +8,7 @@
 " ---------------------------------------------------------
 
 " Polyglot (must come before plugins load)
-let g:polyglot_disabled = ['haskell', 'typescript', 'javascript']
+let g:polyglot_disabled = ['haskell', 'typescript', 'javascript', 'markdown']
 
 source ~/etc/vim/plugins.vim
 
@@ -199,6 +199,17 @@ set noshowmode
 let g:echodoc_enable_at_startup = 1
 let g:echodoc#type = 'signature'
 
+" Markdown
+let g:vim_markdown_folding_level = 1
+let g:vim_markdown_folding_style_pythonic = 1
+let g:vim_markdown_toc_autofit = 1
+let g:vim_markdown_math = 1
+let g:vim_markdown_frontmatter = 1
+let g:vim_markdown_toml_frontmatter = 1
+let g:vim_markdown_auto_insert_bullets = 0
+let g:vim_markdown_new_list_item_indent = 0
+let g:vim_markdown_edit_url_in = 'hsplit'
+
 let g:ctrlp_match_window_reversed = 0
 set wildignore+=*.pyc,*.png,*.jpg,*.gif,*.PNG,*.JPG,*.GIF,*.pdf,*.o,*.obj,.hg
 set wildignore+=*/Archive/*,*.jar,*.class,*.doc,*.rtf,*.ppt,*.zip,*.gz,*.bz2
@@ -252,7 +263,7 @@ function! LanguageClientKeyBindings()
 endfunction
 
 au BufRead,BufNewFile *.txt set filetype=txt
-au BufRead,BufNewFile *.md set filetype=markdown
+au BufRead,BufNewFile CMakeLists.txt set filetype=cmake
 au BufRead,BufNewFile *.gradle set filetype=gradle
 au BufRead,BufNewFile *.sig set filetype=sml
 au BufRead,BufNewFile *?Script.sml source ~/etc/vim/hol4/hol.vim
