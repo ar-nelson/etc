@@ -33,9 +33,12 @@ shopt -s checkwinsize
 HISTCONTROL=ignoreboth
 export HISTIGNORE="&:ls:[bf]g:exit"
 
-source ~/.fzf.bash
-export FZF_TMUX=1
-export FZF_DEFAULT_COMMAND="rg --files --hidden -g '!.git/'"
+if which fzf > /dev/null; then
+  source ~/etc/scripts/fzf/completion.bash
+  source ~/etc/scripts/fzf/key-bindings.bash
+  export FZF_TMUX=1
+  export FZF_DEFAULT_COMMAND="rg --files --hidden -g '!.git/'"
+fi
 
 # Aliases
 # ------------------------------------------------------------
