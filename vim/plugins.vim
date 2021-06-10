@@ -21,17 +21,12 @@ Plug 'w0rp/ale'
 Plug 'ar-nelson/haskell-vim'
 Plug 'wb14123/vim-stylish-haskell'
 Plug 'lervag/vimtex'
-Plug 'Shougo/deoplete.nvim'
-Plug 'autozimu/LanguageClient-neovim', {
-    \ 'branch': 'next',
-    \ 'do': 'bash install.sh',
-    \ }
+if has("nvim")
+  Plug 'neoclide/coc.nvim', {'branch': 'release'}
+endif
 Plug 'cypok/vim-sml'
 Plug 'ar-nelson/vim-syntax-hol4'
-Plug 'leafgarland/typescript-vim'
-Plug 'pangloss/vim-javascript'
 Plug 'tjvr/vim-nearley'
-Plug 'mxw/vim-jsx'
 Plug 'godlygeek/tabular'
 Plug 'plasticboy/vim-markdown'
 Plug 'vim-scripts/gitignore'

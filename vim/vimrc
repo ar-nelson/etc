@@ -8,7 +8,7 @@
 " ---------------------------------------------------------
 
 " Polyglot (must come before plugins load)
-let g:polyglot_disabled = ['haskell', 'typescript', 'javascript', 'markdown']
+let g:polyglot_disabled = ['haskell', 'markdown']
 
 source ~/etc/vim/plugins.vim
 
@@ -30,6 +30,7 @@ set visualbell
 set t_vb=
 au GUIEnter * set vb t_vb=
 set shortmess+=I
+set shortmess+=c
 
 " Use spaces instad of tabs. Indent 2 spaces by default.
 set expandtab
@@ -54,12 +55,7 @@ set textwidth=80
 set formatoptions=cjqrn1
 
 " Sensible options for omni select
-set completeopt=longest,menuone
-
-" Default window dimensions
-set winwidth=79
-set winheight=5
-set winminheight=5
+set completeopt=noinsert,menuone,noselect
 
 " Set the console window title
 set title
@@ -69,6 +65,7 @@ set title
 
 " Set the color scheme.
 colors jellybeans
+hi link NormalFloat Folded
 set cursorline
 
 " Always show line numbers.
@@ -186,14 +183,6 @@ let g:ale_completion_enabled = 0
 let g:ale_sign_error = '✘→'
 let g:ale_sign_warning = '!→'
 
-" Deoplete
-let g:deoplete#enable_at_startup = 1
-call deoplete#custom#source('ale', 'rank', 999)
-call deoplete#custom#option({
-\   'auto_refresh_delay': 0,
-\   'num_processes': 0,
-\ })
-
 " Echodoc
 set noshowmode
 let g:echodoc_enable_at_startup = 1
@@ -220,7 +209,6 @@ set wildignore+=*.a,*.hi,*/target/*,*/build/*,*/dist/*,*/node_modules/*
 " }}} -----------------------------------------------------
 " Language Support {{{ -------------------------------------
 
-let g:ale_linters = { 'haskell': [], 'javascript': ['eslint'], 'css': [], 'sass': [], 'scss': [] }
 let g:haskell_enable_quantification = 1
 let g:haskell_enable_recursivedo = 1
 
@@ -230,36 +218,16 @@ autocmd FileType haskell,lhaskell setl keywordprg=hoogle\ --count=10
 command! -range Pf <line1>,<line2>!pointfree "$(cat)"
 command! -range Unpf <line1>,<line2>!pointful "$(cat)" | sed 's/^(\(.*\))$/\1/'
 
-function! TypescriptLocalSettings()
-  let g:vcm_omni_pattern='.'
-  nnoremap <buffer> K :ALEHover<CR>
-  nnoremap <buffer> <localleader>q :ALEFix<CR>
-  nnoremap <buffer> <localleader>d :ALEGoToDefinition<CR>
-  nnoremap <buffer> <localleader>r :ALEFindReferences<CR>
-endfunction
-
-function! PrettierOnSave(parser)
-  if filereadable('.prettierrc')
-    mark p
-    execute '%!npx prettier --config .prettierrc --parser ' . a:parser
-    if v:shell_error
-      %print
-      undo
-    endif
-    normal! g'p
-  else
-    echo "No .prettierrc available!"
-  endif
-endfunction
-
-function! LanguageClientKeyBindings()
-  nnoremap <buffer> Q :call LanguageClient#explainErrorAtPoint()<CR>
-  nnoremap <buffer> <localleader>k :call LanguageClient#textDocument_hover()<CR>
-  nnoremap <buffer> <localleader>d :call LanguageClient#textDocument_definition()<CR>
-  nnoremap <buffer> <localleader>r :call LanguageClient#textDocument_rename()<CR>
-  nnoremap <buffer> <localleader>b :call LanguageClient#textDocument_references()<CR>
-  nnoremap <buffer> <localleader>a :call LanguageClient#textDocument_codeAction()<CR>
-  nnoremap <buffer> <localleader>s :call LanguageClient#textDocument_documentSymbol()<CR>
+function! BindKeysForCoc()
+  ALEDisableBuffer
+  nnoremap <silent> <Leader>d <Plug>(coc-definition)
+  nnoremap <silent> <Leader>y <Plug>(coc-type-definition)
+  nnoremap <silent> <Leader>i <Plug>(coc-implementation)
+  nnoremap <silent> <Leader>r <Plug>(coc-references)
+  nnoremap <silent> <Leader>q <Plug>(coc-fix-current)
+  nnoremap <silent> <Leader>] <Plug>(coc-diagnostic-next)
+  nnoremap <silent> <Leader>[ <Plug>(coc-diagnostic-prev)
+  setl formatexpr=CocAction('formatSelected')
 endfunction
 
 au BufRead,BufNewFile *.txt set filetype=txt
@@ -271,13 +239,9 @@ au BufRead,BufNewFile *.h++ set filetype=cpp
 au BufRead,BufNewFile *.sld set filetype=scheme
 au FileType java,scala set tw=100
 au FileType json setl formatprg=jq\ .\ -
-au FileType javascript,javascript.jsx,typescript call TypescriptLocalSettings()
 au FileType lisp,scheme,clojure RainbowParentheses
 au FileType html,css,sass,scss setlocal iskeyword+=-
-au FileType txt,markdown call deoplete#custom#buffer_option('auto_complete', v:false)
-au BufWritePre *.js,*.jsx,*.mjs call PrettierOnSave('babel')
-au BufWritePre *.ts,*.tsx call PrettierOnSave('typescript')
-au BufWritePre *.scss call PrettierOnSave('scss')
+au FileType txt,markdown let b:coc_suggest_disable = 1
 
 au FileType css,scss,lisp,scheme,clojure :syntax sync fromstart
 
@@ -288,22 +252,10 @@ hi Warning term=underline cterm=underline ctermfg=Yellow gui=undercurl guisp=Gol
 hi link ALEWarning Warning
 hi link ALEInfo SpellCap
 
-let g:LanguageClient_serverCommands = {
-  \ 'rust': ['~/.cargo/bin/rustup', 'run', 'stable', 'rls'],
-  \ 'haskell'   : ['~/.local/bin/hie'],
-  \ 'lhaskell'   : ['~/.local/bin/hie'],
-  \ 'sass': ['css-languageserver', '--stdio'],
-  \ 'scss': ['css-languageserver', '--stdio'],
-  \ }
-let g:LanguageClient_rootMarkers = {
-  \ 'rust': ['Cargo.toml'],
-  \ 'haskell': ['*.cabal', 'stack.yaml'],
-  \ 'lhaskell': ['*.cabal', 'stack.yaml'],
-  \ 'sass': ['package.json'],
-  \ 'scss': ['package.json']
-  \ }
-
-au FileType javascript,css,sass,scss,haskell,lhaskell,rust call LanguageClientKeyBindings()
+if has("nvim")
+  let g:ale_linters = { 'haskell': [], 'javascript': [], 'typescript': [], 'css': [], 'sass': [], 'scss': [], 'json': [], 'html': [] }
+  au FileType javascript,typescript,css,sass,scss,html,json,haskell,lhaskell,rust,scheme call BindKeysForCoc()
+endif
 
 " }}} -----------------------------------------------------
 " Key Mappings {{{ ----------------------------------------
@@ -420,8 +372,46 @@ command W :w
 command Wq :wq
 command Wa :wa
 
-" deoplete tab-complete
-inoremap <expr><tab> pumvisible() ? "\<c-n>" : "\<tab>"
+if has("nvim")
+  " Use tab for trigger completion with characters ahead and navigate.
+  " NOTE: Use command ':verbose imap <tab>' to make sure tab is not mapped by
+  " other plugin before putting this into your config.
+  inoremap <silent><expr> <TAB>
+        \ pumvisible() ? "\<C-n>" :
+        \ <SID>check_back_space() ? "\<TAB>" :
+        \ coc#refresh()
+  inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
+
+  function! s:check_back_space() abort
+    let col = col('.') - 1
+    return !col || getline('.')[col - 1]  =~# '\s'
+  endfunction
+
+  " Use <c-space> to trigger completion.
+  if has('nvim')
+    inoremap <silent><expr> <c-space> coc#refresh()
+  else
+    inoremap <silent><expr> <c-@> coc#refresh()
+  endif
+
+  " Make <CR> auto-select the first completion item and notify coc.nvim to
+  " format on enter, <cr> could be remapped by other vim plugin
+  inoremap <silent><expr> <cr> pumvisible() ? coc#_select_confirm()
+                                \: "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
+
+  " Use K to show documentation in preview window.
+  nnoremap <silent> K :call <SID>show_documentation()<CR>
+
+  function! s:show_documentation()
+    if (index(['vim','help'], &filetype) >= 0)
+      execute 'h '.expand('<cword>')
+    elseif (coc#rpc#ready())
+      call CocActionAsync('doHover')
+    else
+      execute '!' . &keywordprg . " " . expand('<cword>')
+    endif
+  endfunction
+endif
 
 " }}} -----------------------------------------------------
 
