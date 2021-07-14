@@ -43,7 +43,14 @@ fi
 # Aliases
 # ------------------------------------------------------------
 
-alias ls="ls --color=auto --classify"
+case "$(uname -s)" in
+  Linux)
+    alias ls="ls --color=auto --classify"
+    ;;
+  *)
+    alias ls="ls -GF"
+    ;;
+esac
 alias l='ls -lFh'   # size,show type,human readable
 alias la='ls -lAFh' # long list,show almost all,show type,human readable
 alias lr='ls -tRFh' # sorted by date,recursive,show type,human readable
@@ -161,16 +168,20 @@ Bashrc_Window_Title() {
   esac
 }
 
-# Open a file descriptor to /dev/tty, to write window titles
-# without printing them into command groups.
-#
-# The trailing "||:" prevents this from being an error if it fails.
-#
-# https://stackoverflow.com/a/48407412
-#
-exec {tty_fd}>/dev/tty ||:
+case "$(uname -s)" in
+  Linux)
+    # Open a file descriptor to /dev/tty, to write window titles
+    # without printing them into command groups.
+    #
+    # The trailing "||:" prevents this from being an error if it fails.
+    #
+    # https://stackoverflow.com/a/48407412
+    #
+    exec {tty_fd}>/dev/tty ||:
 
-# Use a DEBUG trap to rewrite the window title on each command.
-# This provides a command name in the title bar, for KeePass to autofill on.
-#
-trap '[[ $tty_fd ]] && Bashrc_Window_Title "${BASH_COMMAND}" >&$tty_fd ||:' DEBUG
+    # Use a DEBUG trap to rewrite the window title on each command.
+    # This provides a command name in the title bar, for KeePass to autofill on.
+    #
+    trap '[[ $tty_fd ]] && Bashrc_Window_Title "${BASH_COMMAND}" >&$tty_fd ||:' DEBUG
+    ;;
+esac
