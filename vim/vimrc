@@ -177,8 +177,7 @@ let g:airline_detect_spelllang = 0
 let g:airline_highlighting_cache = 1
 let g:airline_section_y = ''
 
-" LanguageClient/ALE
-let g:LanguageClient_diagnosticsList = 'location'
+" ALE
 let g:ale_completion_enabled = 0
 let g:ale_sign_error = '✘→'
 let g:ale_sign_warning = '!→'
@@ -218,18 +217,6 @@ autocmd FileType haskell,lhaskell setl keywordprg=hoogle\ --count=10
 command! -range Pf <line1>,<line2>!pointfree "$(cat)"
 command! -range Unpf <line1>,<line2>!pointful "$(cat)" | sed 's/^(\(.*\))$/\1/'
 
-function! BindKeysForCoc()
-  ALEDisableBuffer
-  nnoremap <silent> <Leader>d <Plug>(coc-definition)
-  nnoremap <silent> <Leader>y <Plug>(coc-type-definition)
-  nnoremap <silent> <Leader>i <Plug>(coc-implementation)
-  nnoremap <silent> <Leader>r <Plug>(coc-references)
-  nnoremap <silent> <Leader>q <Plug>(coc-fix-current)
-  nnoremap <silent> <Leader>] <Plug>(coc-diagnostic-next)
-  nnoremap <silent> <Leader>[ <Plug>(coc-diagnostic-prev)
-  setl formatexpr=CocAction('formatSelected')
-endfunction
-
 au BufRead,BufNewFile *.txt set filetype=txt
 au BufRead,BufNewFile CMakeLists.txt set filetype=cmake
 au BufRead,BufNewFile *.gradle set filetype=gradle
@@ -252,9 +239,16 @@ hi Warning term=underline cterm=underline ctermfg=Yellow gui=undercurl guisp=Gol
 hi link ALEWarning Warning
 hi link ALEInfo SpellCap
 
-if has("nvim")
-  let g:ale_linters = { 'haskell': [], 'javascript': [], 'typescript': [], 'css': [], 'sass': [], 'scss': [], 'json': [], 'html': [] }
-  au FileType javascript,typescript,css,sass,scss,html,json,haskell,lhaskell,rust,scheme call BindKeysForCoc()
+hi link LspDiagnosticsDefaultError Error
+hi link LspDiagnosticsDefaultWarning Comment
+hi link LspDiagnosticsDefaultInformation Comment
+hi link LspDiagnosticsDefaultHint Comment
+
+" Set up LSP in Neovim
+if has("nvim-0.5.0")
+  :luafile ~/etc/vim/nvimrc.lua
+  command LspLog :lua vim.cmd('e'..vim.lsp.get_log_path())<CR>
+  autocmd BufWritePre *.js,*.jsx,*.ts,*.tsx lua vim.lsp.buf.formatting_sync(nil, 100000)
 endif
 
 " }}} -----------------------------------------------------
@@ -272,10 +266,6 @@ nnoremap <Leader>r :RainbowParentheses!!<CR>
 nnoremap <Leader>/ :Lines<CR>
 nnoremap <Leader>a :Ack <C-r><C-w><CR>
 nnoremap <Leader>w <C-w>v<C-w>l
-nnoremap <Leader>d :ALEGoToDefinition<CR>
-nnoremap <Leader>q :ALEFix<CR>
-nnoremap <Leader>] :ALENextWrap<CR>
-nnoremap <Leader>[ :ALEPreviousWrap<CR>
 set pastetoggle=<Leader>v
 
 " Open VIMRC with one command.
@@ -362,9 +352,6 @@ function! s:Repl()
 endfunction
 vmap <silent> <expr> p <sid>Repl()
 
-" Use Q to show error detail
-noremap Q :ALEDetail<CR>
-
 " Forgot-to-unshift versions of :q, :qa, :w, :wq, :wa
 command Q :q
 command Qa :qa
@@ -372,45 +359,17 @@ command W :w
 command Wq :wq
 command Wa :wa
 
-if has("nvim")
-  " Use tab for trigger completion with characters ahead and navigate.
-  " NOTE: Use command ':verbose imap <tab>' to make sure tab is not mapped by
-  " other plugin before putting this into your config.
-  inoremap <silent><expr> <TAB>
-        \ pumvisible() ? "\<C-n>" :
-        \ <SID>check_back_space() ? "\<TAB>" :
-        \ coc#refresh()
-  inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
+" Select omnicomplete entries with TAB
+inoremap <silent><expr> <TAB> pumvisible() ? "\<C-n>" : "\<TAB>"
+inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
 
-  function! s:check_back_space() abort
-    let col = col('.') - 1
-    return !col || getline('.')[col - 1]  =~# '\s'
-  endfunction
-
-  " Use <c-space> to trigger completion.
-  if has('nvim')
-    inoremap <silent><expr> <c-space> coc#refresh()
-  else
-    inoremap <silent><expr> <c-@> coc#refresh()
-  endif
-
-  " Make <CR> auto-select the first completion item and notify coc.nvim to
-  " format on enter, <cr> could be remapped by other vim plugin
-  inoremap <silent><expr> <cr> pumvisible() ? coc#_select_confirm()
-                                \: "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
-
-  " Use K to show documentation in preview window.
-  nnoremap <silent> K :call <SID>show_documentation()<CR>
-
-  function! s:show_documentation()
-    if (index(['vim','help'], &filetype) >= 0)
-      execute 'h '.expand('<cword>')
-    elseif (coc#rpc#ready())
-      call CocActionAsync('doHover')
-    else
-      execute '!' . &keywordprg . " " . expand('<cword>')
-    endif
-  endfunction
+" If Neovim 0.5 LSP is unavailable, map its keybindings to ALE instead
+if !has("nvim-0.5.0")
+  nnoremap gd :ALEGoToDefinition<CR>
+  nnoremap <Leader>q :ALEFix<CR>
+  nnoremap <Leader>] :ALENextWrap<CR>
+  nnoremap <Leader>[ :ALEPreviousWrap<CR>
+  noremap Q :ALEDetail<CR>
 endif
 
 " }}} -----------------------------------------------------
