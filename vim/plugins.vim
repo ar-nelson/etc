@@ -5,8 +5,8 @@ call plug#begin('~/.vim/bundle')
 
 Plug 'nanotech/jellybeans.vim'
 if has('nvim-0.5.0')
-  Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
-  Plug 'nvim-treesitter/playground'
+  "Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
+  "Plug 'nvim-treesitter/playground'
   Plug 'neovim/nvim-lspconfig'
   Plug 'hrsh7th/nvim-compe'
 else
@@ -31,8 +31,16 @@ Plug 'lervag/vimtex'
 Plug 'cypok/vim-sml'
 Plug 'ar-nelson/vim-syntax-hol4'
 Plug 'tjvr/vim-nearley'
+Plug 'lluchs/vim-wren'
 Plug 'godlygeek/tabular'
 Plug 'plasticboy/vim-markdown'
+Plug 'bfrg/vim-cpp-modern'
+Plug 'mcnelson/vim-pawn'
+if has('nvim')
+  Plug 'averms/black-nvim', {'do': ':UpdateRemotePlugins'}
+else
+  Plug 'psf/black', { 'branch': 'stable' }
+endif
 Plug 'vim-scripts/gitignore'
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'

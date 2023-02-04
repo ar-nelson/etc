@@ -30,9 +30,9 @@ lnb ~/etc/nethackrc ~/.nethackrc
 lnb ~/etc/vim/vimrc ~/.vimrc
 
 # Pipe for Vim HOL4
-if [ ! -p ~/etc/vim/hol4/fifo ]; then
-  mkfifo ~/etc/vim/hol4/fifo
-fi
+#if [ ! -p ~/etc/vim/hol4/fifo ]; then
+#  mkfifo ~/etc/vim/hol4/fifo
+#fi
 
 # Set up Vim and Neovim folder structure
 lnb ~/etc/vim/vim-plug.vim ~/.vim/autoload/plug.vim
@@ -44,9 +44,14 @@ if which nvim > /dev/null; then
 else
   vim +'PlugInstall --sync' +qa
 fi
-if which npm > /dev/null; then
-  pushd ~/.vim/bundle/tern_for_vim
-  npm install
+
+# Set up nvim Python env
+if which nvim > /dev/null; then
+  mkdir -p ~/.local/venv && pushd ~/.local/venv
+  python3 -m venv nvim
+  cd nvim
+  . ./bin/activate
+  pip install pynvim black
   popd
 fi
 

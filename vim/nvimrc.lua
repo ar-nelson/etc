@@ -57,10 +57,10 @@ local on_attach = function(client, bufnr)
   buf_set_keymap('n', '<Leader>rn', '<cmd>lua vim.lsp.buf.rename()<CR>', opts)
   buf_set_keymap('n', '<Leader>ca', '<cmd>lua vim.lsp.buf.code_action()<CR>', opts)
   buf_set_keymap('n', 'gr', '<cmd>lua vim.lsp.buf.references()<CR>', opts)
-  buf_set_keymap('n', 'Q', '<cmd>lua vim.lsp.diagnostic.show_line_diagnostics()<CR>', opts)
-  buf_set_keymap('n', '[d', '<cmd>lua vim.lsp.diagnostic.goto_prev()<CR>', opts)
-  buf_set_keymap('n', ']d', '<cmd>lua vim.lsp.diagnostic.goto_next()<CR>', opts)
-  buf_set_keymap('n', '<Leader>q', '<cmd>lua vim.lsp.diagnostic.set_loclist()<CR>', opts)
+  buf_set_keymap('n', 'Q', '<cmd>lua vim.diagnostic.open_float()<CR>', opts)
+  buf_set_keymap('n', '[d', '<cmd>lua vim.diagnostic.goto_prev()<CR>', opts)
+  buf_set_keymap('n', ']d', '<cmd>lua vim.diagnostic.goto_next()<CR>', opts)
+  buf_set_keymap('n', '<Leader>q', '<cmd>lua vim.diagnostic.setloclist()<CR>', opts)
   buf_set_keymap('n', '<Leader>f', '<cmd>lua vim.lsp.buf.formatting()<CR>', opts)
 end
 
@@ -71,14 +71,23 @@ local function eslint_config_exists()
     return true
   end
 
-  if vim.fn.filereadable("package.json") then
-    if vim.fn.json_decode(vim.fn.readfile("package.json"))["eslintConfig"] then
-      return true
-    end
-  end
+  --if vim.fn.filereadable("package.json") then
+  --  if vim.fn.json_decode(vim.fn.readfile("package.json"))["eslintConfig"] then
+  --    return true
+  --  end
+  --end
 
   return false
 end
+
+-- clangd (C, C++)
+
+nvim_lsp.clangd.setup {
+  on_attach = function(client, bufnr)
+    client.server_capabilities.document_formatting = false
+    on_attach(client, bufnr)
+  end
+}
 
 -- Typescript + eslint setup based on https://phelipetls.github.io/posts/configuring-eslint-to-work-with-neovim-lsp
 
@@ -92,19 +101,21 @@ local eslint = {
 }
 
 nvim_lsp.tsserver.setup {
+  root_dir = nvim_lsp.util.root_pattern("package.json"),
   on_attach = function(client, bufnr)
     if client.config.flags then
       client.config.flags.allow_incremental_sync = true
     end
-    client.resolved_capabilities.document_formatting = false
+    client.server_capabilities.document_formatting = false
     on_attach(client, bufnr)
   end
 }
 
 nvim_lsp.efm.setup {
+  root_dir = nvim_lsp.util.root_pattern("package.json"),
   on_attach = function(client)
-    client.resolved_capabilities.document_formatting = true
-    client.resolved_capabilities.goto_definition = false
+    client.server_capabilities.document_formatting = true
+    client.server_capabilities.goto_definition = false
   end,
   root_dir = function()
     if not eslint_config_exists() then
@@ -130,4 +141,14 @@ nvim_lsp.efm.setup {
     "typescript.tsx",
     "typescriptreact",
   },
+}
+
+-- Deno setup, triggered by import_map.json
+
+nvim_lsp.denols.setup {
+  root_dir = nvim_lsp.util.root_pattern("deno.json"),
+  on_attach = on_attach,
+  init_options = {
+    lint = true,
+  }
 }

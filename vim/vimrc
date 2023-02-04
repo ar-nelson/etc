@@ -8,7 +8,12 @@
 " ---------------------------------------------------------
 
 " Polyglot (must come before plugins load)
-let g:polyglot_disabled = ['haskell', 'markdown']
+let g:polyglot_disabled = ['c', 'cpp', 'haskell', 'markdown']
+
+" nvim Python (must come before plugins load)
+if has('nvim')
+  let g:python3_host_prog = $HOME . '/.local/venv/nvim/bin/python'
+endif
 
 source ~/etc/vim/plugins.vim
 
@@ -67,6 +72,9 @@ set title
 colors jellybeans
 hi link NormalFloat Folded
 set cursorline
+
+" Font, for Neovide (and maybe other GUIs?)
+set guifont=GoMono_Nerd_Font,Go_Mono,Source_Code_Pro,Hack,Consolas,Noto_Color_Emoji:h8
 
 " Always show line numbers.
 set number
@@ -198,18 +206,38 @@ let g:vim_markdown_auto_insert_bullets = 0
 let g:vim_markdown_new_list_item_indent = 0
 let g:vim_markdown_edit_url_in = 'hsplit'
 
+" Neovim terminal
+augroup neovim_terminal
+  autocmd!
+  " Enter Terminal-mode (insert) automatically
+  autocmd TermOpen * startinsert
+  " Disables number lines on terminal buffers
+  autocmd TermOpen * :set nonumber norelativenumber
+  " Allows you to use Ctrl-C on terminal window
+  autocmd TermOpen * nnoremap <buffer> <C-c> i<C-c>
+augroup END
+
+" CtrlP
 let g:ctrlp_match_window_reversed = 0
 set wildignore+=*.pyc,*.png,*.jpg,*.gif,*.PNG,*.JPG,*.GIF,*.pdf,*.o,*.obj,.hg
 set wildignore+=*/Archive/*,*.jar,*.class,*.doc,*.rtf,*.ppt,*.zip,*.gz,*.bz2
 set wildignore+=*.lzma,*.7z,*.exe,*.dll,*.so.*,*~,*.wav,*.mp3,*.flac,*.ogg
-set wildignore+=*.ttf,*.mpg,*.avi,*.MPG,*.AVI,*.mp4,*.divx,*.wma,*.wmv
-set wildignore+=*.a,*.hi,*/target/*,*/build/*,*/dist/*,*/node_modules/*
+set wildignore+=*.ttf,*.mpg,*.avi,*.MPG,*.AVI,*.mp4,*.divx,*.wma,*.wmv,*.a,*.hi
+set wildignore+=*/target/*,*/build/*,*/dist/*,*/node_modules/*,*/__pycache__
 
 " }}} -----------------------------------------------------
 " Language Support {{{ -------------------------------------
 
+let g:black#settings = {'line_length': 100}
+
 let g:haskell_enable_quantification = 1
 let g:haskell_enable_recursivedo = 1
+
+let c_gnu = 1
+let c_space_errors = 1
+let c_no_curly_error = 1
+let c_no_bracket_error = 1
+hi link cParenError NONE
 
 autocmd FileType haskell,lhaskell setl keywordprg=hoogle\ --count=10
 "autocmd FileType haskell,lhaskell setl formatprg=xargs\ pointfree
@@ -222,8 +250,12 @@ au BufRead,BufNewFile CMakeLists.txt set filetype=cmake
 au BufRead,BufNewFile *.gradle set filetype=gradle
 au BufRead,BufNewFile *.sig set filetype=sml
 au BufRead,BufNewFile *?Script.sml source ~/etc/vim/hol4/hol.vim
+au BufRead,BufNewFile *.h set filetype=c
 au BufRead,BufNewFile *.h++ set filetype=cpp
 au BufRead,BufNewFile *.sld set filetype=scheme
+au BufRead,BufNewFile *.p set filetype=pawn
+au BufRead,BufNewFile *.inc set filetype=pawn
+au BufRead,BufNewFile *.do set filetype=bash
 au FileType java,scala set tw=100
 au FileType json setl formatprg=jq\ .\ -
 au FileType lisp,scheme,clojure RainbowParentheses
@@ -231,6 +263,7 @@ au FileType html,css,sass,scss setlocal iskeyword+=-
 au FileType txt,markdown let b:coc_suggest_disable = 1
 
 au FileType css,scss,lisp,scheme,clojure :syntax sync fromstart
+au BufWritePre *.py call Black()
 
 let g:tex_flavor='latex'
 
@@ -300,7 +333,7 @@ nnoremap <Leader>x :bp\|bd #<CR>
 nnoremap <Leader>m :w\|silent! make\|cw<CR><C-l>
 
 " Unset the 'last search pattern' register by hitting return.
-nnoremap <CR> :noh<CR><CR>
+nnoremap <silent> <CR> :noh<CR><CR>
 
 " When searching, center on the next search term.
 nnoremap n nzz
