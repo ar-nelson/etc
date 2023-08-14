@@ -36,11 +36,13 @@ Plug 'godlygeek/tabular'
 Plug 'plasticboy/vim-markdown'
 Plug 'bfrg/vim-cpp-modern'
 Plug 'mcnelson/vim-pawn'
-if has('nvim')
-  Plug 'averms/black-nvim', {'do': ':UpdateRemotePlugins'}
-else
-  Plug 'psf/black', { 'branch': 'stable' }
-endif
+Plug 'ziglang/zig.vim'
+Plug 'bakpakin/janet.vim'
+"if has('nvim')
+"  Plug 'averms/black-nvim', {'do': ':UpdateRemotePlugins'}
+"else
+"  Plug 'psf/black', { 'branch': 'stable' }
+"endif
 Plug 'vim-scripts/gitignore'
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'

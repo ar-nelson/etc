@@ -207,15 +207,17 @@ let g:vim_markdown_new_list_item_indent = 0
 let g:vim_markdown_edit_url_in = 'hsplit'
 
 " Neovim terminal
-augroup neovim_terminal
-  autocmd!
-  " Enter Terminal-mode (insert) automatically
-  autocmd TermOpen * startinsert
-  " Disables number lines on terminal buffers
-  autocmd TermOpen * :set nonumber norelativenumber
-  " Allows you to use Ctrl-C on terminal window
-  autocmd TermOpen * nnoremap <buffer> <C-c> i<C-c>
-augroup END
+if has("nvim")
+  augroup neovim_terminal
+    autocmd!
+    " Enter Terminal-mode (insert) automatically
+    autocmd TermOpen * startinsert
+    " Disables number lines on terminal buffers
+    autocmd TermOpen * :set nonumber norelativenumber
+    " Allows you to use Ctrl-C on terminal window
+    autocmd TermOpen * nnoremap <buffer> <C-c> i<C-c>
+  augroup END
+endif
 
 " CtrlP
 let g:ctrlp_match_window_reversed = 0
@@ -263,7 +265,6 @@ au FileType html,css,sass,scss setlocal iskeyword+=-
 au FileType txt,markdown let b:coc_suggest_disable = 1
 
 au FileType css,scss,lisp,scheme,clojure :syntax sync fromstart
-au BufWritePre *.py call Black()
 
 let g:tex_flavor='latex'
 
@@ -272,16 +273,17 @@ hi Warning term=underline cterm=underline ctermfg=Yellow gui=undercurl guisp=Gol
 hi link ALEWarning Warning
 hi link ALEInfo SpellCap
 
-hi link LspDiagnosticsDefaultError Error
-hi link LspDiagnosticsDefaultWarning Comment
-hi link LspDiagnosticsDefaultInformation Comment
-hi link LspDiagnosticsDefaultHint Comment
-
 " Set up LSP in Neovim
 if has("nvim-0.5.0")
+  hi link LspDiagnosticsDefaultError Error
+  hi link LspDiagnosticsDefaultWarning Comment
+  hi link LspDiagnosticsDefaultInformation Comment
+  hi link LspDiagnosticsDefaultHint Comment
+
   :luafile ~/etc/vim/nvimrc.lua
   command LspLog :lua vim.cmd('e'..vim.lsp.get_log_path())<CR>
   autocmd BufWritePre *.js,*.jsx,*.ts,*.tsx lua vim.lsp.buf.formatting_sync(nil, 100000)
+  autocmd FileType javascript,typescript,scheme,zig setlocal signcolumn=yes
 endif
 
 " }}} -----------------------------------------------------
