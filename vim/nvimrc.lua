@@ -83,6 +83,7 @@ end
 -- clangd (C, C++)
 
 nvim_lsp.clangd.setup {
+  cmd = {"clangd", "--completion-style=detailed", "--clang-tidy"},
   on_attach = function(client, bufnr)
     client.server_capabilities.document_formatting = false
     on_attach(client, bufnr)
@@ -91,57 +92,57 @@ nvim_lsp.clangd.setup {
 
 -- Typescript + eslint setup based on https://phelipetls.github.io/posts/configuring-eslint-to-work-with-neovim-lsp
 
-local eslint = {
-  lintCommand = "eslint_d -f unix --stdin --stdin-filename ${INPUT}",
-  lintStdin = true,
-  lintFormats = {"%f:%l:%c: %m"},
-  lintIgnoreExitCode = true,
-  formatCommand = "prettier --parser=typescript --stdin-filepath=${INPUT} | eslint_d --fix-to-stdout --stdin --stdin-filename=${INPUT}",
-  formatStdin = true
-}
+-- local eslint = {
+--   lintCommand = "eslint_d -f unix --stdin --stdin-filename ${INPUT}",
+--   lintStdin = true,
+--   lintFormats = {"%f:%l:%c: %m"},
+--   lintIgnoreExitCode = true,
+--   formatCommand = "prettier --parser=typescript --stdin-filepath=${INPUT} | eslint_d --fix-to-stdout --stdin --stdin-filename=${INPUT}",
+--   formatStdin = true
+-- }
 
-nvim_lsp.tsserver.setup {
-  root_dir = nvim_lsp.util.root_pattern("package.json"),
-  on_attach = function(client, bufnr)
-    if client.config.flags then
-      client.config.flags.allow_incremental_sync = true
-    end
-    client.server_capabilities.document_formatting = false
-    on_attach(client, bufnr)
-  end
-}
+-- nvim_lsp.tsserver.setup {
+--   root_dir = nvim_lsp.util.root_pattern("package.json"),
+--   on_attach = function(client, bufnr)
+--     if client.config.flags then
+--       client.config.flags.allow_incremental_sync = true
+--     end
+--     client.server_capabilities.document_formatting = false
+--     on_attach(client, bufnr)
+--   end
+-- }
 
-nvim_lsp.efm.setup {
-  root_dir = nvim_lsp.util.root_pattern("package.json"),
-  on_attach = function(client)
-    client.server_capabilities.document_formatting = true
-    client.server_capabilities.goto_definition = false
-  end,
-  root_dir = function()
-    if not eslint_config_exists() then
-      return nil
-    end
-    return vim.fn.getcwd()
-  end,
-  settings = {
-    languages = {
-      javascript = {eslint},
-      javascriptreact = {eslint},
-      ["javascript.jsx"] = {eslint},
-      typescript = {eslint},
-      ["typescript.tsx"] = {eslint},
-      typescriptreact = {eslint},
-    }
-  },
-  filetypes = {
-    "javascript",
-    "javascriptreact",
-    "javascript.jsx",
-    "typescript",
-    "typescript.tsx",
-    "typescriptreact",
-  },
-}
+-- nvim_lsp.efm.setup {
+--   root_dir = nvim_lsp.util.root_pattern("package.json"),
+--   on_attach = function(client)
+--     client.server_capabilities.document_formatting = true
+--     client.server_capabilities.goto_definition = false
+--   end,
+--   root_dir = function()
+--     if not eslint_config_exists() then
+--       return nil
+--     end
+--     return vim.fn.getcwd()
+--   end,
+--   settings = {
+--     languages = {
+--       javascript = {eslint},
+--       javascriptreact = {eslint},
+--       ["javascript.jsx"] = {eslint},
+--       typescript = {eslint},
+--       ["typescript.tsx"] = {eslint},
+--       typescriptreact = {eslint},
+--     }
+--   },
+--   filetypes = {
+--     "javascript",
+--     "javascriptreact",
+--     "javascript.jsx",
+--     "typescript",
+--     "typescript.tsx",
+--     "typescriptreact",
+--   },
+-- }
 
 -- Deno setup, triggered by import_map.json
 
@@ -151,4 +152,10 @@ nvim_lsp.denols.setup {
   init_options = {
     lint = true,
   }
+}
+
+nvim_lsp.zls.setup {
+  cmd = {"/home/a/.nix-profile/bin/zls"};
+  filetypes = {"zig"};
+  root_dir = nvim_lsp.util.root_pattern("build.zig", ".git");
 }

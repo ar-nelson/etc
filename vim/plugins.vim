@@ -38,6 +38,7 @@ Plug 'bfrg/vim-cpp-modern'
 Plug 'mcnelson/vim-pawn'
 Plug 'ziglang/zig.vim'
 Plug 'bakpakin/janet.vim'
+Plug 'dcharbon/vim-flatbuffers'
 "if has('nvim')
 "  Plug 'averms/black-nvim', {'do': ':UpdateRemotePlugins'}
 "else
