@@ -40,7 +40,7 @@ lnb ~/etc/vim/nvim-init.vim ~/.config/nvim/init.vim
 
 # Install Vim plugins
 if which nvim > /dev/null; then
-  nvim +'PlugInstall --sync' +qa
+  nvim --headless +'PlugInstall --sync' +qa
 else
   vim +'PlugInstall --sync' +qa
 fi
