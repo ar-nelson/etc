@@ -154,8 +154,9 @@ nvim_lsp.denols.setup {
   }
 }
 
-nvim_lsp.zls.setup {
-  cmd = {"/home/a/.nix-profile/bin/zls"};
-  filetypes = {"zig"};
-  root_dir = nvim_lsp.util.root_pattern("build.zig", ".git");
+-- Haskell, provided by haskell-tools.nvim
+vim.g.haskell_tools = {
+  hls = {
+    on_attach = on_attach
+  }
 }

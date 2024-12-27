@@ -217,6 +217,9 @@ if has("nvim")
     " Allows you to use Ctrl-C on terminal window
     autocmd TermOpen * nnoremap <buffer> <C-c> i<C-c>
   augroup END
+
+  " Neovim code lens
+  hi def link LspCodeLens Comment
 endif
 
 " CtrlP
@@ -299,9 +302,7 @@ nnoremap <Leader>t :Tags<CR>
 nnoremap <Leader>n :Lexplore<CR>
 nnoremap <Leader>r :RainbowParentheses!!<CR>
 nnoremap <Leader>/ :Lines<CR>
-nnoremap <Leader>a :Ack <C-r><C-w><CR>
 nnoremap <Leader>w <C-w>v<C-w>l
-set pastetoggle=<Leader>v
 
 " Open VIMRC with one command.
 nnoremap <Leader>rc  :e ~/etc/vim/vimrc<CR>
