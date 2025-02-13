@@ -5,11 +5,11 @@ call plug#begin('~/.vim/bundle')
 
 Plug 'nanotech/jellybeans.vim'
 if has('nvim-0.5.0')
-  "Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
-  "Plug 'nvim-treesitter/playground'
   Plug 'neovim/nvim-lspconfig'
   Plug 'hrsh7th/nvim-compe'
   Plug 'mrcjkb/haskell-tools.nvim'
+  Plug 'nvim-lua/plenary.nvim'
+  Plug 'scalameta/nvim-metals'
 else
   Plug 'sheerun/vim-polyglot'
   Plug 'w0rp/ale'

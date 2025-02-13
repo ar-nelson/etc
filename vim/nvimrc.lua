@@ -1,7 +1,8 @@
 local nvim_lsp = require('lspconfig')
 
 -- Autocomplete setup w/ compe
-require('compe').setup {
+local compe = require('compe')
+compe.setup {
   enabled = true;
   autocomplete = true;
   debug = false;
@@ -160,3 +161,33 @@ vim.g.haskell_tools = {
     on_attach = on_attach
   }
 }
+
+-- Metals, this config is its own thing (not using nvim_lsp)
+local metals = require('metals')
+local metals_config = metals.bare_config()
+metals_config.settings = {
+ showImplicitArguments = true
+}
+
+metals_config.on_attach = function()
+  compe.on_attach();
+end
+
+metals_config.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(
+  vim.lsp.diagnostic.on_publish_diagnostics, {
+    virtual_text = {
+      prefix = '',
+    }
+  }
+)
+
+-- local lsp_group = vim.api.nvim_create_augroup('lsp', { clear = true })
+
+vim.api.nvim_create_autocmd('FileType', {
+    pattern = { 'scala' },
+    callback = function()
+        vim.opt_global.shortmess:remove("F")
+        metals.initialize_or_attach(metals_config)
+    end,
+    -- group = lsp_group
+})
