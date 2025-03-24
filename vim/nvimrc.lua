@@ -12,11 +12,18 @@ cmp.setup({
     ['<CR>'] = cmp.mapping.confirm({ select = false }),
     ['<TAB>'] = cmp.mapping.confirm({ select = true })
   }),
-  sources = cmp.config.sources({
-    { name = 'nvim_lsp' },
-  }, {
-    { name = 'buffer' },
-  })
+  sources = {
+    { name = 'path' },
+    { name = 'nvim_lsp', keyword_length = 3 },
+    { name = 'nvim_lsp_signature_help'},
+    { name = 'nvim_lua', keyword_length = 2},
+    { name = 'buffer', keyword_length = 2 },
+    { name = 'calc'},
+  },
+  window = {
+    completion = cmp.config.window.bordered(),
+    documentation = cmp.config.window.bordered(),
+  }
 })
 
 -- Use buffer source for `/` and `?` (if you enabled `native_menu`, this won't work anymore).
@@ -170,6 +177,20 @@ nvim_lsp.denols.setup {
   capabilities = capabilities
 }
 
+-- Rust
+
+local rt = require("rust-tools")
+
+rt.setup({
+  server = {
+    on_attach = function(client, bufnr)
+      on_attach(client, bufnr)
+      vim.keymap.set("n", "<C-space>", rt.hover_actions.hover_actions, { buffer = bufnr })
+      vim.keymap.set("n", "<Leader>a", rt.code_action_group.code_action_group, { buffer = bufnr })
+    end,
+  },
+})
+
 -- Haskell, provided by haskell-tools.nvim
 
 vim.g.haskell_tools = {
@@ -204,7 +225,25 @@ vim.api.nvim_create_autocmd('FileType', {
     end,
 })
 
+-- Treesitter (mostly for rust)
+
+require('nvim-treesitter.configs').setup {
+  ensure_installed = { "lua", "rust", "toml" },
+  auto_install = true,
+  highlight = {
+    enable = true,
+    additional_vim_regex_highlighting = false,
+  },
+  ident = { enable = true }, 
+  rainbow = {
+    enable = true,
+    extended_mode = true,
+    max_file_lines = nil,
+  }
+}
+
 -- Format on save
+
 local format_on_save = require("format-on-save")
 local formatters = require("format-on-save.formatters")
 
