@@ -1,37 +1,48 @@
 local nvim_lsp = require('lspconfig')
 
--- Autocomplete setup w/ compe
-local compe = require('compe')
-compe.setup {
-  enabled = true;
-  autocomplete = true;
-  debug = false;
-  min_length = 1;
-  preselect = 'enable';
-  throttle_time = 80;
-  source_timeout = 200;
-  resolve_timeout = 800;
-  incomplete_delay = 400;
-  max_abbr_width = 100;
-  max_kind_width = 100;
-  max_menu_width = 100;
-  documentation = {
-    border = { '', '' ,'', ' ', '', '', '', ' ' }, -- the border option is the same as `|help nvim_open_win|`
-    winhighlight = "NormalFloat:CompeDocumentation,FloatBorder:CompeDocumentationBorder",
-    max_width = 120,
-    min_width = 60,
-    max_height = math.floor(vim.o.lines * 0.3),
-    min_height = 1,
-  };
+-- Autocomplete setup w/ cmp
+local cmp = require('cmp')
 
-  source = {
-    path = true;
-    buffer = true;
-    calc = true;
-    nvim_lsp = true;
-    nvim_lua = true;
-  };
-}
+cmp.setup({
+  mapping = cmp.mapping.preset.insert({
+    ['<C-b>'] = cmp.mapping.scroll_docs(-4),
+    ['<C-f>'] = cmp.mapping.scroll_docs(4),
+    ['<C-Space>'] = cmp.mapping.complete(),
+    ['<C-e>'] = cmp.mapping.abort(),
+    ['<CR>'] = cmp.mapping.confirm({ select = false }),
+    ['<TAB>'] = cmp.mapping.confirm({ select = true })
+  }),
+  sources = cmp.config.sources({
+    { name = 'nvim_lsp' },
+  }, {
+    { name = 'buffer' },
+  })
+})
+
+-- Use buffer source for `/` and `?` (if you enabled `native_menu`, this won't work anymore).
+cmp.setup.cmdline({ '/', '?' }, {
+  mapping = cmp.mapping.preset.cmdline(),
+  sources = {
+    { name = 'buffer' }
+  }
+})
+
+-- Use cmdline & path source for ':' (if you enabled `native_menu`, this won't work anymore).
+cmp.setup.cmdline(':', {
+  mapping = cmp.mapping.preset.cmdline(),
+  sources = cmp.config.sources({
+    { name = 'path' }
+  }, {
+    { name = 'cmdline' }
+  }),
+  matching = { disallow_symbol_nonprefix_matching = false }
+})
+
+-- Set up lspconfig.
+local capabilities = require('cmp_nvim_lsp').default_capabilities()
+
+-- oh yeah we got trouble, right here in river city
+require('trouble').setup()
 
 -- Use an on_attach function to only map the following keys
 -- after the language server attaches to the current buffer
@@ -88,74 +99,79 @@ nvim_lsp.clangd.setup {
   on_attach = function(client, bufnr)
     client.server_capabilities.document_formatting = false
     on_attach(client, bufnr)
-  end
+  end,
+  capabilities = capabilities
 }
 
 -- Typescript + eslint setup based on https://phelipetls.github.io/posts/configuring-eslint-to-work-with-neovim-lsp
 
--- local eslint = {
---   lintCommand = "eslint_d -f unix --stdin --stdin-filename ${INPUT}",
---   lintStdin = true,
---   lintFormats = {"%f:%l:%c: %m"},
---   lintIgnoreExitCode = true,
---   formatCommand = "prettier --parser=typescript --stdin-filepath=${INPUT} | eslint_d --fix-to-stdout --stdin --stdin-filename=${INPUT}",
---   formatStdin = true
--- }
+local eslint = {
+  lintCommand = "eslint_d -f unix --stdin --stdin-filename ${INPUT}",
+  lintStdin = true,
+  lintFormats = {"%f:%l:%c: %m"},
+  lintIgnoreExitCode = true,
+  formatCommand = "prettier --parser=typescript --stdin-filepath=${INPUT} | eslint_d --fix-to-stdout --stdin --stdin-filename=${INPUT}",
+  formatStdin = true
+}
 
--- nvim_lsp.tsserver.setup {
---   root_dir = nvim_lsp.util.root_pattern("package.json"),
---   on_attach = function(client, bufnr)
---     if client.config.flags then
---       client.config.flags.allow_incremental_sync = true
---     end
---     client.server_capabilities.document_formatting = false
---     on_attach(client, bufnr)
---   end
--- }
+nvim_lsp.ts_ls.setup {
+  root_dir = nvim_lsp.util.root_pattern("package.json"),
+  on_attach = function(client, bufnr)
+    if client.config.flags then
+      client.config.flags.allow_incremental_sync = true
+    end
+    --client.server_capabilities.document_formatting = false
+    on_attach(client, bufnr)
+  end,
+  capabilities = capabilities
+}
 
--- nvim_lsp.efm.setup {
---   root_dir = nvim_lsp.util.root_pattern("package.json"),
---   on_attach = function(client)
---     client.server_capabilities.document_formatting = true
---     client.server_capabilities.goto_definition = false
---   end,
---   root_dir = function()
---     if not eslint_config_exists() then
---       return nil
---     end
---     return vim.fn.getcwd()
---   end,
---   settings = {
---     languages = {
---       javascript = {eslint},
---       javascriptreact = {eslint},
---       ["javascript.jsx"] = {eslint},
---       typescript = {eslint},
---       ["typescript.tsx"] = {eslint},
---       typescriptreact = {eslint},
---     }
---   },
---   filetypes = {
---     "javascript",
---     "javascriptreact",
---     "javascript.jsx",
---     "typescript",
---     "typescript.tsx",
---     "typescriptreact",
---   },
--- }
+nvim_lsp.efm.setup {
+  root_dir = nvim_lsp.util.root_pattern("package.json"),
+  on_attach = function(client)
+    client.server_capabilities.document_formatting = true
+    client.server_capabilities.goto_definition = false
+  end,
+  root_dir = function()
+    if not eslint_config_exists() then
+      return nil
+    end
+    return vim.fn.getcwd()
+  end,
+  settings = {
+    languages = {
+      javascript = {eslint},
+      javascriptreact = {eslint},
+      ["javascript.jsx"] = {eslint},
+      typescript = {eslint},
+      ["typescript.tsx"] = {eslint},
+      typescriptreact = {eslint},
+    }
+  },
+  filetypes = {
+    "javascript",
+    "javascriptreact",
+    "javascript.jsx",
+    "typescript",
+    "typescript.tsx",
+    "typescriptreact",
+  },
+  capabilities = capabilities
+}
 
--- Deno setup, triggered by import_map.json
+-- Deno setup, triggered by deno.json
 
 nvim_lsp.denols.setup {
   root_dir = nvim_lsp.util.root_pattern("deno.json"),
   on_attach = on_attach,
   init_options = {
     lint = true,
-  }
+  },
+  capabilities = capabilities
 }
 
 -- Haskell, provided by haskell-tools.nvim
+
 vim.g.haskell_tools = {
   hls = {
     on_attach = on_attach
@@ -163,15 +179,14 @@ vim.g.haskell_tools = {
 }
 
 -- Metals, this config is its own thing (not using nvim_lsp)
+
 local metals = require('metals')
 local metals_config = metals.bare_config()
 metals_config.settings = {
  showImplicitArguments = true
 }
-
-metals_config.on_attach = function()
-  compe.on_attach();
-end
+metals_config.capabilities = capabilities
+metals_config.on_attach = on_attach
 
 metals_config.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(
   vim.lsp.diagnostic.on_publish_diagnostics, {
@@ -181,13 +196,66 @@ metals_config.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(
   }
 )
 
--- local lsp_group = vim.api.nvim_create_augroup('lsp', { clear = true })
-
 vim.api.nvim_create_autocmd('FileType', {
     pattern = { 'scala' },
     callback = function()
         vim.opt_global.shortmess:remove("F")
         metals.initialize_or_attach(metals_config)
     end,
-    -- group = lsp_group
 })
+
+-- Format on save
+local format_on_save = require("format-on-save")
+local formatters = require("format-on-save.formatters")
+
+local js_formatters = {
+  formatters.if_file_exists({
+    pattern = ".eslintrc.*",
+    formatter = formatters.eslint_d_fix
+  }),
+  formatters.if_file_exists({
+    pattern = { ".prettierrc", ".prettierrc.*", "prettier.config.*" },
+    formatter = formatters.prettierd,
+  })
+}
+
+format_on_save.setup({
+  exclude_path_patterns = {
+    "/node_modules/",
+    "/vendor/",
+    "/thirdparty/",
+    "/build/",
+    "/out/",
+    ".local/share/nvim/lazy",
+  },
+  formatter_by_ft = {
+    css = formatters.lsp,
+    html = formatters.lsp,
+    java = formatters.lsp,
+    json = formatters.lsp,
+    lua = formatters.lsp,
+    c = formatters.lsp,
+    cpp = formatters.lsp,
+    markdown = formatters.prettierd,
+    python = formatters.black,
+    rust = formatters.lsp,
+    scala = formatters.lsp,
+    scss = formatters.lsp,
+    sh = formatters.shfmt,
+    yaml = formatters.lsp,
+
+    javascript = js_formatters,
+    javascriptreact = js_formatters,
+    typescript = js_formatters,
+    typescriptreact = js_formatters,
+  },
+
+  fallback_formatter = {
+    formatters.remove_trailing_whitespace
+  },
+
+  experiments = {
+    partial_update = 'diff'
+  }
+})
+

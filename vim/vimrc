@@ -74,7 +74,7 @@ hi link NormalFloat Folded
 set cursorline
 
 " Font, for Neovide (and maybe other GUIs?)
-set guifont=GoMono_Nerd_Font,Go_Mono,Source_Code_Pro,Hack,Consolas,Noto_Color_Emoji:h8
+set guifont=Victor_Mono:h12
 
 " Always show line numbers.
 set number
@@ -222,8 +222,7 @@ if has("nvim")
   hi def link LspCodeLens Comment
 endif
 
-" CtrlP
-let g:ctrlp_match_window_reversed = 0
+" Search (fzf, Telescope)
 set wildignore+=*.pyc,*.png,*.jpg,*.gif,*.PNG,*.JPG,*.GIF,*.pdf,*.o,*.obj,.hg
 set wildignore+=*/Archive/*,*.jar,*.class,*.doc,*.rtf,*.ppt,*.zip,*.gz,*.bz2
 set wildignore+=*.lzma,*.7z,*.exe,*.dll,*.so.*,*~,*.wav,*.mp3,*.flac,*.ogg
@@ -232,8 +231,6 @@ set wildignore+=*/target/*,*/build/*,*/dist/*,*/node_modules/*,*/__pycache__
 
 " }}} -----------------------------------------------------
 " Language Support {{{ -------------------------------------
-
-let g:black#settings = {'line_length': 100}
 
 let g:haskell_enable_quantification = 1
 let g:haskell_enable_recursivedo = 1
@@ -261,11 +258,12 @@ au BufRead,BufNewFile *.sld set filetype=scheme
 au BufRead,BufNewFile *.p set filetype=pawn
 au BufRead,BufNewFile *.inc set filetype=pawn
 au BufRead,BufNewFile *.do set filetype=bash
-au FileType java,scala set tw=100
+au BufRead,BufNewFile *.mill set filetype=scala
+au FileType java set tw=100
+au FileType scala set tw=120
 au FileType json setl formatprg=jq\ .\ -
 au FileType lisp,scheme,clojure RainbowParentheses
 au FileType html,css,sass,scss setlocal iskeyword+=-
-au FileType txt,markdown let b:coc_suggest_disable = 1
 
 au FileType css,scss,lisp,scheme,clojure :syntax sync fromstart
 
@@ -285,8 +283,8 @@ if has("nvim-0.5.0")
 
   :luafile ~/etc/vim/nvimrc.lua
   command LspLog :lua vim.cmd('e'..vim.lsp.get_log_path())<CR>
-  autocmd BufWritePre *.js,*.jsx,*.ts,*.tsx lua vim.lsp.buf.formatting_sync(nil, 100000)
-  autocmd FileType javascript,typescript,scheme,zig setlocal signcolumn=yes
+  " autocmd BufWritePre *.js,*.jsx,*.ts,*.tsx lua vim.lsp.buf.formatting_sync(nil, 100000)
+  autocmd FileType javascript,typescript,scheme,zig,c,cpp,scala setlocal signcolumn=yes
 endif
 
 " }}} -----------------------------------------------------
@@ -296,19 +294,31 @@ let mapleader = '\'
 let maplocalleader = ' '
 
 " Shortcuts for plugin commands.
-nnoremap <Leader>p :FZF<CR>
-nnoremap <Leader><Leader> :Buffers<CR>
-nnoremap <Leader>t :Tags<CR>
+if has("nvim-0.5.0")
+  nnoremap <Leader>p :Telescope find_files<CR>
+  nnoremap <Leader><Leader> :Telescope buffers ignore_current_buffer=true sort_mru=true<CR>
+  nnoremap <Leader>t :Telescope tags<CR>
+  nnoremap <Leader>r :Telescope lsp_references<CR>
+  nnoremap <Leader>b :Telescope lsp_definitions<CR>
+  nnoremap <Leader>m :Telescope lsp_implementations<CR>
+  nnoremap <Leader>' :Telescope lsp_workspace_symbols<CR>
+  nnoremap <Leader>/ :Telescope current_buffer_fuzzy_find<CR>
+
+  nnoremap <Leader>xx :Trouble diagnostics toggle<CR>
+  nnoremap <Leader>xX :Trouble diagnostics toggle filter.buf=0<CR>
+  nnoremap <Leader>cs :Trouble symbols toggle focus=false<CR>
+  nnoremap <Leader>cl :Trouble lsp toggle focus=false win.position=right<CR>
+  nnoremap <Leader>xL :Trouble loclist toggle<CR>
+  nnoremap <Leader>xQ :Trouble qflist toggle<CR>
+else
+  nnoremap <Leader>p :FZF<CR>
+  nnoremap <Leader><Leader> :Buffers<CR>
+  nnoremap <Leader>t :Tags<CR>
+  nnoremap <Leader>/ :Lines<CR>
+endif
 nnoremap <Leader>n :Lexplore<CR>
-nnoremap <Leader>r :RainbowParentheses!!<CR>
-nnoremap <Leader>/ :Lines<CR>
+nnoremap <Leader>R :RainbowParentheses!!<CR>
 nnoremap <Leader>w <C-w>v<C-w>l
-
-" Open VIMRC with one command.
-nnoremap <Leader>rc  :e ~/etc/vim/vimrc<CR>
-
-" Source a modified VIMRC with one command as well.
-nnoremap <Leader>src :so ~/etc/vim/vimrc<CR>
 
 " Open help in a vertical split with :vhelp.
 cabbrev vhelp botright vert h
