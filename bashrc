@@ -38,6 +38,9 @@ if which fzf > /dev/null; then
   source ~/etc/scripts/fzf/key-bindings.bash
   export FZF_TMUX=1
   export FZF_DEFAULT_COMMAND="rg --files --hidden -g '!.git/'"
+
+  # fix https://github.com/junegunn/fzf/issues/2941#issuecomment-1958719364
+  export FZF_TMUX_OPTS='-p 100%,40% -y P'
 fi
 
 # Aliases
