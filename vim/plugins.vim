@@ -23,6 +23,7 @@ if has('nvim-0.5.0')
   Plug 'lewis6991/gitsigns.nvim'
   Plug 'scalameta/nvim-metals'
   Plug 'nvim-treesitter/nvim-treesitter'
+  Plug 'github/copilot.vim'
 else
   Plug 'sheerun/vim-polyglot'
   Plug 'junegunn/fzf'
