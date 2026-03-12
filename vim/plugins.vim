@@ -15,7 +15,7 @@ if has('nvim-0.5.0')
   Plug 'hrsh7th/cmp-cmdline'
   Plug 'elentok/format-on-save.nvim'
   Plug 'folke/trouble.nvim'
-  Plug 'simrat39/rust-tools.nvim'
+  Plug 'mrcjkb/rustaceanvim'
   Plug 'mrcjkb/haskell-tools.nvim'
   Plug 'nvim-lua/popup.nvim'
   Plug 'nvim-lua/plenary.nvim'

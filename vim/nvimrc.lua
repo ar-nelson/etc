@@ -1,5 +1,3 @@
-local nvim_lsp = require('lspconfig')
-
 -- Autocomplete setup w/ cmp
 local cmp = require('cmp')
 
@@ -101,14 +99,15 @@ end
 
 -- clangd (C, C++)
 
-nvim_lsp.clangd.setup {
+vim.lsp.config('clangd', {
   cmd = {"clangd", "--completion-style=detailed", "--clang-tidy"},
   on_attach = function(client, bufnr)
     client.server_capabilities.document_formatting = false
     on_attach(client, bufnr)
   end,
   capabilities = capabilities
-}
+})
+vim.lsp.enable('clangd')
 
 -- Typescript + eslint setup based on https://phelipetls.github.io/posts/configuring-eslint-to-work-with-neovim-lsp
 
@@ -121,8 +120,8 @@ local eslint = {
   formatStdin = true
 }
 
-nvim_lsp.ts_ls.setup {
-  root_dir = nvim_lsp.util.root_pattern("package.json"),
+vim.lsp.config('ts_ls', {
+  root_markers = { "package.json" },
   on_attach = function(client, bufnr)
     if client.config.flags then
       client.config.flags.allow_incremental_sync = true
@@ -131,10 +130,11 @@ nvim_lsp.ts_ls.setup {
     on_attach(client, bufnr)
   end,
   capabilities = capabilities
-}
+})
+vim.lsp.enable('ts_ls')
 
-nvim_lsp.efm.setup {
-  root_dir = nvim_lsp.util.root_pattern("package.json"),
+vim.lsp.config('efm', {
+  root_markers = { "package.json" },
   on_attach = function(client)
     client.server_capabilities.document_formatting = true
     client.server_capabilities.goto_definition = false
@@ -164,24 +164,24 @@ nvim_lsp.efm.setup {
     "typescriptreact",
   },
   capabilities = capabilities
-}
+})
+vim.lsp.enable('efm')
 
 -- Deno setup, triggered by deno.json
 
-nvim_lsp.denols.setup {
-  root_dir = nvim_lsp.util.root_pattern("deno.json"),
+vim.lsp.config('denols', {
+  root_markers = { "deno.json" },
   on_attach = on_attach,
   init_options = {
     lint = true,
   },
   capabilities = capabilities
-}
+})
+vim.lsp.enable('denols')
 
 -- Rust
 
-local rt = require("rust-tools")
-
-rt.setup({
+vim.g.rustaceanvim = {
   server = {
     on_attach = function(client, bufnr)
       on_attach(client, bufnr)
@@ -189,7 +189,7 @@ rt.setup({
       vim.keymap.set("n", "<Leader>a", rt.code_action_group.code_action_group, { buffer = bufnr })
     end,
   },
-})
+}
 
 -- Haskell, provided by haskell-tools.nvim
 
@@ -199,7 +199,7 @@ vim.g.haskell_tools = {
   }
 }
 
--- Metals, this config is its own thing (not using nvim_lsp)
+-- Metals, this config is its own thing (not using vim.lsp.config)
 
 local metals = require('metals')
 local metals_config = metals.bare_config()
@@ -227,14 +227,14 @@ vim.api.nvim_create_autocmd('FileType', {
 
 -- Treesitter (mostly for rust)
 
-require('nvim-treesitter.configs').setup {
+require('nvim-treesitter.config').setup {
   ensure_installed = { "lua", "rust", "toml" },
   auto_install = true,
   highlight = {
     enable = true,
     additional_vim_regex_highlighting = false,
   },
-  ident = { enable = true }, 
+  ident = { enable = true },
   rainbow = {
     enable = true,
     extended_mode = true,
