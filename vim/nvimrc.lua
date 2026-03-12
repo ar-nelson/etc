@@ -179,6 +179,27 @@ vim.lsp.config('denols', {
 })
 vim.lsp.enable('denols')
 
+-- Python
+
+vim.lsp.config('pyright', {
+  on_attach = on_attach,
+  settings = {
+    pyright = {
+      autoImportCompletion = true,
+    },
+    python = {
+      analysis = {
+        autoSearchPaths = true,
+        diagnosticMode = 'openFilesOnly',
+        useLibraryCodeForTypes = true,
+        typeCheckingMode = 'standard'
+      }
+    }
+  },
+  capabilities = capabilities
+})
+vim.lsp.enable('pyright')
+
 -- Rust
 
 vim.g.rustaceanvim = {
